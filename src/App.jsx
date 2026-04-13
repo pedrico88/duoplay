@@ -13,6 +13,8 @@ import Profile from '@/pages/Profile';
 import Scores from '@/pages/Scores';
 import PlayGame from '@/pages/PlayGame';
 import Settings from '@/pages/Settings';
+import Tournament from '@/pages/Tournament';
+import TournamentResults from '@/pages/TournamentResults';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -49,6 +51,8 @@ const AuthenticatedApp = () => {
           <Route path="/settings" element={<Settings />} />
         </Route>
         <Route path="/play/:gameId" element={<PlayGame />} />
+        <Route path="/tournament" element={<Tournament />} />
+        <Route path="/tournament/results" element={<TournamentResults />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </GameProvider>

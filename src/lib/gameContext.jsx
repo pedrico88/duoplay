@@ -19,6 +19,26 @@ export function GameProvider({ children }) {
 
   const [sessionScore, setSessionScore] = useState({ player1: 0, player2: 0 });
 
+  // Tournament state
+  const [tournament, setTournament] = useState(null);
+  // tournament: { games: [...gameIds], currentIndex: number, scores: { player1: 0, player2: 0 } }
+
+  const startTournament = (gameIds) => {
+    setTournament({ games: gameIds, currentIndex: 0, scores: { player1: 0, player2: 0 } });
+  };
+
+  const advanceTournament = (winnerPlayer) => {
+    setTournament(prev => {
+      if (!prev) return null;
+      const newScores = { ...prev.scores };
+      if (winnerPlayer === 'player1') newScores.player1 += 1;
+      else if (winnerPlayer === 'player2') newScores.player2 += 1;
+      return { ...prev, currentIndex: prev.currentIndex + 1, scores: newScores };
+    });
+  };
+
+  const endTournament = () => setTournament(null);
+
   useEffect(() => {
     localStorage.setItem('duoplay_profile', JSON.stringify(profile));
   }, [profile]);
@@ -65,6 +85,7 @@ export function GameProvider({ children }) {
       profile, updateProfile, recordWin, recordLoss,
       isDark, setIsDark,
       sessionScore, setSessionScore,
+      tournament, startTournament, advanceTournament, endTournament,
       AVATARS
     }}>
       {children}

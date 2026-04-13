@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Trophy } from 'lucide-react';
 import { GAMES, CATEGORIES } from '@/lib/gameData';
 import GameCard from '@/components/duoplay/GameCard';
 
@@ -10,14 +12,21 @@ export default function Games() {
   return (
     <div className="min-h-screen pb-24">
       <div className="px-4 pt-6 pb-4">
-        <motion.h1
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-display text-2xl font-bold"
-        >
-          🎮 Juegos
-        </motion.h1>
-        <p className="text-muted-foreground text-sm mt-1">2 jugadores · mismo móvil</p>
+        <div className="flex items-start justify-between">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="font-display text-2xl font-bold">🎮 Juegos</h1>
+            <p className="text-muted-foreground text-sm mt-1">2 jugadores · mismo móvil</p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+            <Link
+              to="/tournament"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-accent to-primary text-white text-xs font-bold shadow-md active:scale-95 transition-transform"
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              Torneo
+            </Link>
+          </motion.div>
+        </div>
       </div>
 
       {/* Categories */}
