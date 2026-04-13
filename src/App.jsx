@@ -13,6 +13,7 @@ import Profile from '@/pages/Profile';
 import Scores from '@/pages/Scores';
 import PlayGame from '@/pages/PlayGame';
 import OnlineRoom from '@/pages/OnlineRoom';
+import JoinRoom from '@/pages/JoinRoom';
 import Settings from '@/pages/Settings';
 
 const AuthenticatedApp = () => {
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
         <Route path="/play/:gameId" element={<PlayGame />} />
         <Route path="/room/:code" element={<OnlineRoom />} />
         <Route path="/create-room" element={<OnlineRoom />} />
+        <Route path="/join-room" element={<JoinRoom />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </GameProvider>

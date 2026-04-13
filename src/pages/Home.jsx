@@ -1,24 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Gamepad2, Wifi, WifiOff, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useGame } from '@/lib/gameContext.jsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function Home() {
   const { profile, isDark, setIsDark } = useGame();
   const navigate = useNavigate();
-  const [showJoin, setShowJoin] = useState(false);
-  const [roomCode, setRoomCode] = useState('');
-
-  const handleJoinRoom = () => {
-    if (roomCode.length === 6) {
-      navigate(`/room/${roomCode.toUpperCase()}`);
-      setShowJoin(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 pb-24 relative overflow-hidden">
@@ -104,7 +93,7 @@ export default function Home() {
             transition={{ delay: 0.4 }}
           >
             <button
-              onClick={() => setShowJoin(true)}
+              onClick={() => navigate('/join-room')}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
             >
               ¿Tienes un código de sala? Únete aquí
@@ -138,30 +127,7 @@ export default function Home() {
         )}
       </motion.div>
 
-      {/* Join Room Dialog */}
-      <Dialog open={showJoin} onOpenChange={setShowJoin}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="font-display text-center">Unirse a una sala</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <Input
-              placeholder="Código de 6 caracteres"
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value.toUpperCase().slice(0, 6))}
-              className="text-center text-2xl font-mono tracking-[0.3em] h-14 rounded-xl uppercase"
-              maxLength={6}
-            />
-            <Button
-              onClick={handleJoinRoom}
-              disabled={roomCode.length !== 6}
-              className="w-full rounded-xl h-12 font-display"
-            >
-              Unirse
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }
