@@ -15,10 +15,15 @@ export default function Settings() {
     base44.auth.logout('/');
   };
 
-  const handleDeleteData = () => {
+  const handleDeleteData = async () => {
     localStorage.removeItem('duoplay_profile');
     updateProfile({ nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} });
     setShowDeleteDialog(false);
+    try {
+      await base44.auth.deleteAccount();
+    } catch (e) {
+      base44.auth.logout('/');
+    }
   };
 
   const sections = [
@@ -48,8 +53,8 @@ export default function Settings() {
         },
         {
           icon: Trash2,
-          label: 'Eliminar mis datos',
-          description: 'Borra estadísticas y perfil local',
+          label: 'Eliminar cuenta',
+          description: 'Borra cuenta y todos los datos',
           action: () => setShowDeleteDialog(true),
           color: 'text-destructive',
           bg: 'bg-destructive/10',
@@ -160,7 +165,7 @@ export default function Settings() {
             </DialogTitle>
           </DialogHeader>
           <div className="text-center text-muted-foreground text-sm mb-4">
-            Se borrarán todas tus estadísticas y datos del perfil local. Esta acción no se puede deshacer.
+            Se eliminará tu cuenta y todos los datos permanentemente. Esta acción <strong>no se puede deshacer</strong>.
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={() => setShowDeleteDialog(false)} className="flex-1 rounded-xl">

@@ -87,7 +87,19 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    overscroll-behavior: none;
   }
+  button, nav, svg {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
 }
 
 /* Custom scrollbar */

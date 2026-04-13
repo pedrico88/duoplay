@@ -11,7 +11,7 @@ export default function GameHeader({ title, emoji, onReset, player1Score = 0, pl
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center justify-between px-4 py-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40"
+      className="flex items-center justify-between px-4 py-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40 safe-area-top"
     >
       <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
         <ArrowLeft className="w-5 h-5" />

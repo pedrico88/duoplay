@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -15,6 +16,35 @@ import PlayGame from '@/pages/PlayGame';
 import Settings from '@/pages/Settings';
 import Tournament from '@/pages/Tournament';
 import TournamentResults from '@/pages/TournamentResults';
+
+const pageVariants = {
+  initial: { opacity: 0, x: 20 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.2, ease: 'easeOut' } },
+  exit: { opacity: 0, x: -20, transition: { duration: 0.15, ease: 'easeIn' } },
+};
+
+function AnimatedRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div key={location.pathname} variants={pageVariants} initial="initial" animate="animate" exit="exit" style={{ minHeight: '100vh' }}>
+        <Routes location={location}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/scores" element={<Scores />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="/play/:gameId" element={<PlayGame />} />
+          <Route path="/tournament" element={<Tournament />} />
+          <Route path="/tournament/results" element={<TournamentResults />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -42,19 +72,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <GameProvider>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/scores" element={<Scores />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-        <Route path="/play/:gameId" element={<PlayGame />} />
-        <Route path="/tournament" element={<Tournament />} />
-        <Route path="/tournament/results" element={<TournamentResults />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+      <AnimatedRoutes />
     </GameProvider>
   );
 };

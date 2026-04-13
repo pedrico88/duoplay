@@ -19,8 +19,8 @@ export default function BottomNav() {
   if (location.pathname.startsWith('/room/')) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border safe-area-bottom">
-      <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-1">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border">
+      <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-1 safe-area-bottom">
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           return (
