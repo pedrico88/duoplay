@@ -201,30 +201,34 @@ export default function OnlineRoom() {
       try {
         const rooms = await base44.entities.GameRoom.filter({ code: urlCode.toUpperCase() });
         if (!rooms || rooms.length === 0) {
-          setError('Sala no encontrada');
+          setError('Sala no encontrada. Verifica el código.');
           setPhase('error');
           return;
         }
         const r = rooms[0];
-        if (r.status === 'waiting' && !r.guest_email) {
-          const user = await base44.auth.me();
-          if (user.email !== r.host_email) {
-            await base44.entities.GameRoom.update(r.id, {
-              guest_email: user.email,
-              guest_nickname: profile.nickname || 'Jugador 2',
-              guest_avatar: profile.avatar || '🤖',
-              status: 'playing',
-            });
-            setRoom({ ...r, guest_email: user.email, guest_nickname: profile.nickname || 'Jugador 2', guest_avatar: profile.avatar || '🤖', status: 'playing' });
-          } else {
-            setRoom(r);
-          }
-        } else {
+        const user = await base44.auth.me();
+
+        if (r.status === 'waiting' && !r.guest_email && user.email !== r.host_email) {
+          const updated = await base44.entities.GameRoom.update(r.id, {
+            guest_email: user.email,
+            guest_nickname: profile.nickname || 'Jugador 2',
+            guest_avatar: profile.avatar || '🤖',
+            status: 'playing',
+          });
+          setRoom(updated || { ...r, guest_email: user.email, guest_nickname: profile.nickname || 'Jugador 2', guest_avatar: profile.avatar || '🤖', status: 'playing' });
+          setPhase('playing');
+        } else if (user.email === r.host_email) {
+          // Host rejoining
           setRoom(r);
+          setPhase(r.status === 'playing' ? 'playing' : 'waiting');
+        } else {
+          // Guest rejoining or spectating
+          setRoom(r);
+          setPhase(r.status === 'playing' ? 'playing' : 'waiting');
         }
-        setPhase(r.status === 'playing' ? 'playing' : 'waiting');
-      } catch {
-        setError('Error al conectar con la sala');
+      } catch (err) {
+        console.error('Error joining room:', err);
+        setError('Error al conectar con la sala: ' + (err?.message || 'inténtalo de nuevo'));
         setPhase('error');
       }
     };
