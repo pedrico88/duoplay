@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Gamepad2, User, Trophy } from 'lucide-react';
+import { Home, Gamepad2, User, Trophy, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const NAV_ITEMS = [
@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { path: '/games', icon: Gamepad2, label: 'Juegos' },
   { path: '/scores', icon: Trophy, label: 'Marcador' },
   { path: '/profile', icon: User, label: 'Perfil' },
+  { path: '/settings', icon: Settings, label: 'Ajustes' },
 ];
 
 export default function BottomNav() {

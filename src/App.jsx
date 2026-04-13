@@ -13,6 +13,7 @@ import Profile from '@/pages/Profile';
 import Scores from '@/pages/Scores';
 import PlayGame from '@/pages/PlayGame';
 import OnlineRoom from '@/pages/OnlineRoom';
+import Settings from '@/pages/Settings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -46,6 +47,7 @@ const AuthenticatedApp = () => {
           <Route path="/games" element={<Games />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/scores" element={<Scores />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
         <Route path="/play/:gameId" element={<PlayGame />} />
         <Route path="/room/:code" element={<OnlineRoom />} />
