@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/lib/gameContext.jsx';
 
@@ -63,10 +63,17 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
+          className="flex flex-col gap-3"
         >
           <Link to="/games">
             <Button className="w-full h-16 rounded-2xl text-lg font-display font-bold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/25 gap-3">
               🕹️ ¡Jugar ahora!
+            </Button>
+          </Link>
+          <Link to="/tournament">
+            <Button variant="outline" className="w-full h-12 rounded-2xl font-display font-bold border-2 border-accent text-accent hover:bg-accent hover:text-white gap-2">
+              <Trophy className="w-4 h-4" />
+              Modo Torneo
             </Button>
           </Link>
         </motion.div>
