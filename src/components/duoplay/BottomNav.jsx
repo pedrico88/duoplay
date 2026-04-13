@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Gamepad2, User, Trophy, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
 
 export default function BottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Hide nav during active games
   if (location.pathname.startsWith('/play/')) return null;
@@ -24,9 +25,9 @@ export default function BottomNav() {
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           return (
-            <Link
+            <button
               key={path}
-              to={path}
+              onClick={() => isActive ? navigate(path, { replace: true }) : navigate(path)}
               className="relative flex flex-col items-center gap-0.5 py-2 px-4 rounded-xl transition-colors"
             >
               {isActive && (
@@ -48,7 +49,7 @@ export default function BottomNav() {
               >
                 {label}
               </span>
-            </Link>
+            </button>
           );
         })}
       </div>

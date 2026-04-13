@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Sun, Moon, Trophy, Target, Gamepad2 } from 'lucide-react';
 import { GAMES } from '@/lib/gameData';
+import PullToRefresh from '@/components/duoplay/PullToRefresh';
 
 export default function Profile() {
   const { profile, updateProfile, AVATARS, isDark, setIsDark } = useGame();
@@ -17,7 +18,10 @@ export default function Profile() {
 
   const winRate = profile.gamesPlayed > 0 ? Math.round((profile.wins / profile.gamesPlayed) * 100) : 0;
 
+  const handleRefresh = useCallback(() => new Promise(r => setTimeout(r, 600)), []);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="min-h-screen pb-24 px-4">
       <div className="max-w-lg mx-auto pt-6">
         <motion.h1
@@ -163,5 +167,6 @@ export default function Profile() {
         </motion.div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }

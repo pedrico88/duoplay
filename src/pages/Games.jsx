@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 import { GAMES, CATEGORIES } from '@/lib/gameData';
 import GameCard from '@/components/duoplay/GameCard';
+import PullToRefresh from '@/components/duoplay/PullToRefresh';
 
 export default function Games() {
   const [activeCategory, setActiveCategory] = useState('all');
   const filtered = activeCategory === 'all' ? GAMES : GAMES.filter(g => g.category === activeCategory);
 
+  const handleRefresh = useCallback(() => new Promise(r => setTimeout(r, 600)), []);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="min-h-screen pb-24">
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-start justify-between">
@@ -56,5 +60,6 @@ export default function Games() {
         ))}
       </div>
     </div>
+    </PullToRefresh>
   );
 }

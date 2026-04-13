@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sun, Moon, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/lib/gameContext.jsx';
+import PullToRefresh from '@/components/duoplay/PullToRefresh';
 
 export default function Home() {
   const { profile, isDark, setIsDark } = useGame();
 
+  const handleRefresh = useCallback(() => new Promise(r => setTimeout(r, 600)), []);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="min-h-screen flex flex-col items-center justify-center p-6 pb-24 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -104,5 +108,6 @@ export default function Home() {
         )}
       </motion.div>
     </div>
+    </PullToRefresh>
   );
 }
