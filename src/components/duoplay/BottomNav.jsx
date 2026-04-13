@@ -16,6 +16,7 @@ export default function BottomNav() {
 
   // Hide nav during active games
   if (location.pathname.startsWith('/play/')) return null;
+  if (location.pathname.startsWith('/room/')) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border safe-area-bottom">

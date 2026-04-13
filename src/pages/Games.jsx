@@ -4,26 +4,20 @@ import { GAMES, CATEGORIES } from '@/lib/gameData';
 import GameCard from '@/components/duoplay/GameCard';
 
 export default function Games() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const mode = urlParams.get('mode') || 'local';
   const [activeCategory, setActiveCategory] = useState('all');
-
   const filtered = activeCategory === 'all' ? GAMES : GAMES.filter(g => g.category === activeCategory);
 
   return (
     <div className="min-h-screen pb-24">
-      {/* Header */}
       <div className="px-4 pt-6 pb-4">
         <motion.h1
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="font-display text-2xl font-bold"
         >
-          {mode === 'online' ? '🌐 Juegos Online' : '🎮 Juegos Locales'}
+          🎮 Juegos
         </motion.h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          {mode === 'online' ? 'Crea o únete a una sala' : 'Juega en el mismo dispositivo'}
-        </p>
+        <p className="text-muted-foreground text-sm mt-1">2 jugadores · mismo móvil</p>
       </div>
 
       {/* Categories */}
@@ -49,7 +43,7 @@ export default function Games() {
       {/* Games Grid */}
       <div className="px-4 grid grid-cols-2 gap-3">
         {filtered.map((game, index) => (
-          <GameCard key={game.id} game={game} index={index} mode={mode} />
+          <GameCard key={game.id} game={game} index={index} />
         ))}
       </div>
     </div>

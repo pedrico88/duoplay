@@ -1,13 +1,12 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Gamepad2, Wifi, WifiOff, Sun, Moon } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/lib/gameContext.jsx';
 
 export default function Home() {
   const { profile, isDark, setIsDark } = useGame();
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 pb-24 relative overflow-hidden">
@@ -43,7 +42,7 @@ export default function Home() {
             DúoPlay
           </h1>
           <p className="text-muted-foreground mt-2 text-sm">
-            Juegos para 2 jugadores
+            Juegos para 2 jugadores · mismo móvil
           </p>
         </motion.div>
 
@@ -59,54 +58,25 @@ export default function Home() {
           </motion.p>
         )}
 
-        {/* Main Actions */}
-        <div className="space-y-4">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Link to="/games?mode=local">
-              <Button className="w-full h-16 rounded-2xl text-lg font-display font-bold bg-gradient-to-r from-primary to-primary/80 hover:opacity-90 shadow-lg shadow-primary/25 gap-3">
-                <WifiOff className="w-6 h-6" />
-                Jugar Local
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Link to="/games?mode=online">
-              <Button variant="outline" className="w-full h-16 rounded-2xl text-lg font-display font-bold border-2 border-secondary text-secondary hover:bg-secondary/10 gap-3">
-                <Wifi className="w-6 h-6" />
-                Jugar Online
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <button
-              onClick={() => navigate('/join-room')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-            >
-              ¿Tienes un código de sala? Únete aquí
-            </button>
-          </motion.div>
-        </div>
+        {/* Main Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Link to="/games">
+            <Button className="w-full h-16 rounded-2xl text-lg font-display font-bold bg-gradient-to-r from-primary to-secondary hover:opacity-90 shadow-lg shadow-primary/25 gap-3">
+              🕹️ ¡Jugar ahora!
+            </Button>
+          </Link>
+        </motion.div>
 
         {/* Quick Stats */}
         {profile.gamesPlayed > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.4 }}
             className="mt-10 grid grid-cols-3 gap-3"
           >
             <div className="bg-card rounded-2xl p-3 border border-border">
@@ -126,8 +96,6 @@ export default function Home() {
           </motion.div>
         )}
       </motion.div>
-
-
     </div>
   );
 }
