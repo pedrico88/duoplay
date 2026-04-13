@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useGame } from '@/lib/gameContext.jsx';
 import { GAMES } from '@/lib/gameData';
-import { Copy, Check, Loader2, ArrowLeft, Wifi } from 'lucide-react';
+import { Copy, Check, Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import TurnIndicator from '@/components/duoplay/TurnIndicator';
 
@@ -17,11 +17,11 @@ function generateCode() {
   return code;
 }
 
-// ── Phase: pick game ──────────────────────────────────────────────────────────
+// ── Pick game ─────────────────────────────────────────────────────────────────
 function GamePicker({ onSelect, onBack }) {
   const [selected, setSelected] = useState(null);
   return (
-    <div className="min-h-screen flex flex-col p-6 pt-16">
+    <div className="min-h-screen flex flex-col p-6 pt-16 relative">
       <button onClick={onBack} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
         <ArrowLeft className="w-5 h-5" />
       </button>
@@ -57,7 +57,7 @@ function GamePicker({ onSelect, onBack }) {
   );
 }
 
-// ── Phase: waiting (host) ─────────────────────────────────────────────────────
+// ── Waiting lobby (host) ──────────────────────────────────────────────────────
 function WaitingLobby({ room, onBack }) {
   const [copied, setCopied] = useState(false);
   const game = GAMES.find(g => g.id === room.game);
@@ -73,14 +73,10 @@ function WaitingLobby({ room, onBack }) {
       <button onClick={onBack} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
         <ArrowLeft className="w-5 h-5" />
       </button>
-
-      {/* Game badge */}
       <div className={`bg-gradient-to-br ${game?.color} p-4 rounded-3xl shadow-xl`}>
         <span className="text-5xl">{game?.emoji}</span>
       </div>
       <h2 className="font-display text-xl font-bold">{game?.name} — Sala creada</h2>
-
-      {/* Big code display */}
       <div className="w-full max-w-xs bg-card rounded-3xl border-2 border-dashed border-primary/60 p-6 text-center shadow-lg">
         <p className="text-xs text-muted-foreground mb-1 font-medium uppercase tracking-wider">Código de sala</p>
         <p className="font-mono text-5xl font-black tracking-[0.25em] text-primary select-all">
@@ -88,12 +84,10 @@ function WaitingLobby({ room, onBack }) {
         </p>
         <p className="text-xs text-muted-foreground mt-2">Comparte este código con tu amigo</p>
       </div>
-
       <Button onClick={copyCode} variant="outline" className="rounded-2xl h-12 px-6 gap-2 border-2 font-semibold">
         {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
         {copied ? '¡Copiado!' : 'Copiar código'}
       </Button>
-
       <div className="flex items-center gap-2 text-muted-foreground text-sm">
         <Loader2 className="w-4 h-4 animate-spin" />
         Esperando a que se una alguien…
@@ -102,55 +96,7 @@ function WaitingLobby({ room, onBack }) {
   );
 }
 
-// ── Phase: join by code ───────────────────────────────────────────────────────
-function JoinByCode({ onBack, onJoin }) {
-  const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleJoin = async () => {
-    if (code.length !== 6) return;
-    setLoading(true);
-    setError('');
-    const rooms = await base44.entities.GameRoom.filter({ code: code.toUpperCase() });
-    if (!rooms || rooms.length === 0) {
-      setError('Sala no encontrada. Revisa el código.');
-      setLoading(false);
-      return;
-    }
-    onJoin(rooms[0]);
-    setLoading(false);
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-5 relative">
-      <button onClick={onBack} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
-        <ArrowLeft className="w-5 h-5" />
-      </button>
-      <div className="text-5xl">🔑</div>
-      <h2 className="font-display text-2xl font-bold">Unirse a sala</h2>
-      <p className="text-sm text-muted-foreground text-center">Introduce el código que te dio tu amigo</p>
-      <Input
-        placeholder="XXXXXX"
-        value={code}
-        onChange={e => { setCode(e.target.value.toUpperCase().slice(0, 6)); setError(''); }}
-        className="text-center text-3xl font-mono tracking-[0.4em] h-16 rounded-2xl uppercase max-w-xs w-full border-2"
-        maxLength={6}
-        autoFocus
-      />
-      {error && <p className="text-destructive text-sm text-center">{error}</p>}
-      <Button
-        onClick={handleJoin}
-        disabled={code.length !== 6 || loading}
-        className="w-full max-w-xs rounded-2xl h-14 font-display text-base"
-      >
-        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : '🚀 Entrar'}
-      </Button>
-    </div>
-  );
-}
-
-// ── Phase: playing (both players ready) ──────────────────────────────────────
+// ── Playing lobby ─────────────────────────────────────────────────────────────
 function PlayingLobby({ room, onNavigate, onBack }) {
   const game = GAMES.find(g => g.id === room.game);
   return (
@@ -180,66 +126,75 @@ function PlayingLobby({ room, onNavigate, onBack }) {
   );
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────────
 export default function OnlineRoom() {
   const { code: urlCode } = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { profile } = useGame();
   const { toast } = useToast();
 
-  // Possible phases: 'pick' | 'waiting' | 'join' | 'playing' | 'loading' | 'error'
-  const [phase, setPhase] = useState(urlCode ? 'loading' : 'pick');
+  // 'pick' | 'creating' | 'waiting' | 'joining' | 'playing' | 'loading' | 'error'
+  const [phase, setPhase] = useState('pick');
   const [room, setRoom] = useState(null);
   const [error, setError] = useState('');
   const [prevTurn, setPrevTurn] = useState(null);
 
-  // If URL has a code, join directly
-  useEffect(() => {
-    if (!urlCode) return;
-    const joinFromUrl = async () => {
-      try {
-        const rooms = await base44.entities.GameRoom.filter({ code: urlCode.toUpperCase() });
-        if (!rooms || rooms.length === 0) {
-          setError('Sala no encontrada. Verifica el código.');
-          setPhase('error');
-          return;
-        }
-        const r = rooms[0];
-        const user = await base44.auth.me();
+  // Track whether we already handled the URL code so we don't re-run
+  const handledRef = useRef(false);
 
-        if (r.status === 'waiting' && !r.guest_email && user.email !== r.host_email) {
-          const updated = await base44.entities.GameRoom.update(r.id, {
-            guest_email: user.email,
-            guest_nickname: profile.nickname || 'Jugador 2',
-            guest_avatar: profile.avatar || '🤖',
-            status: 'playing',
-          });
-          setRoom(updated || { ...r, guest_email: user.email, guest_nickname: profile.nickname || 'Jugador 2', guest_avatar: profile.avatar || '🤖', status: 'playing' });
-          setPhase('playing');
-        } else if (user.email === r.host_email) {
-          // Host rejoining
-          setRoom(r);
-          setPhase(r.status === 'playing' ? 'playing' : 'waiting');
-        } else {
-          // Guest rejoining or spectating
-          setRoom(r);
-          setPhase(r.status === 'playing' ? 'playing' : 'waiting');
-        }
-      } catch (err) {
-        console.error('Error joining room:', err);
-        setError('Error al conectar con la sala: ' + (err?.message || 'inténtalo de nuevo'));
+  // If URL has a code on mount → join as guest (or rejoin as host)
+  useEffect(() => {
+    if (!urlCode || handledRef.current) return;
+    handledRef.current = true;
+    setPhase('loading');
+
+    const join = async () => {
+      const rooms = await base44.entities.GameRoom.filter({ code: urlCode.toUpperCase() });
+      if (!rooms || rooms.length === 0) {
+        setError('Sala no encontrada. Verifica el código.');
         setPhase('error');
+        return;
       }
+      const r = rooms[0];
+      const user = await base44.auth.me();
+
+      if (user.email === r.host_email) {
+        // Host returning to their own room
+        setRoom(r);
+        setPhase(r.status === 'playing' ? 'playing' : 'waiting');
+        return;
+      }
+
+      if (r.status === 'waiting' && !r.guest_email) {
+        // New guest joining
+        const updated = await base44.entities.GameRoom.update(r.id, {
+          guest_email: user.email,
+          guest_nickname: profile.nickname || 'Jugador 2',
+          guest_avatar: profile.avatar || '🤖',
+          status: 'playing',
+        });
+        setRoom(updated);
+        setPhase('playing');
+        return;
+      }
+
+      // Guest returning or room already full
+      setRoom(r);
+      setPhase(r.status === 'playing' ? 'playing' : 'waiting');
     };
-    joinFromUrl();
+
+    join().catch(err => {
+      console.error('join error:', err);
+      setError('Error al conectar: ' + (err?.message || 'inténtalo de nuevo'));
+      setPhase('error');
+    });
   }, [urlCode]);
 
-  // Create room after picking game
+  // Create room
   const handleCreateRoom = async (gameId) => {
     setPhase('loading');
-    const code = generateCode();
     const user = await base44.auth.me();
+    const code = generateCode();
     const newRoom = await base44.entities.GameRoom.create({
       code,
       host_email: user.email,
@@ -253,26 +208,9 @@ export default function OnlineRoom() {
       chat_messages: [],
     });
     setRoom(newRoom);
-    // Update URL so it's shareable
-    navigate(`/room/${newRoom.code}`, { replace: true });
     setPhase('waiting');
-  };
-
-  // Handle join from JoinByCode component
-  const handleJoinRoom = async (r) => {
-    const user = await base44.auth.me();
-    if (r.status === 'waiting' && !r.guest_email && user.email !== r.host_email) {
-      await base44.entities.GameRoom.update(r.id, {
-        guest_email: user.email,
-        guest_nickname: profile.nickname || 'Jugador 2',
-        guest_avatar: profile.avatar || '🤖',
-        status: 'playing',
-      });
-      setRoom({ ...r, guest_email: user.email, guest_nickname: profile.nickname || 'Jugador 2', guest_avatar: profile.avatar || '🤖', status: 'playing' });
-    } else {
-      setRoom(r);
-    }
-    setPhase('playing');
+    // Update URL for shareability WITHOUT triggering the join useEffect
+    window.history.replaceState(null, '', `/room/${newRoom.code}`);
   };
 
   // Real-time subscription
@@ -280,21 +218,22 @@ export default function OnlineRoom() {
     if (!room?.id) return;
     const unsub = base44.entities.GameRoom.subscribe(async (event) => {
       if (event.id !== room.id) return;
-      const newRoom = event.data;
-      setRoom(newRoom);
-      if (newRoom.status === 'playing' && phase === 'waiting') {
+      const updated = event.data;
+      setRoom(updated);
+      if (updated.status === 'playing' && phase === 'waiting') {
         setPhase('playing');
         toast({ title: '¡Tu amigo se unió! 🎉', description: 'La partida está lista', duration: 3000 });
       }
       const user = await base44.auth.me();
-      if (newRoom.current_turn === user.email && prevTurn !== user.email && newRoom.status === 'playing') {
+      if (updated.current_turn === user.email && prevTurn !== user.email) {
         toast({ title: '¡Es tu turno! 🎯', description: 'Haz tu movimiento', duration: 2500 });
       }
-      setPrevTurn(newRoom.current_turn);
+      setPrevTurn(updated.current_turn);
     });
     return unsub;
   }, [room?.id, phase, prevTurn]);
 
+  // ── Render ──
   if (phase === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -307,9 +246,9 @@ export default function OnlineRoom() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
         <div className="text-5xl">😕</div>
-        <p className="font-display font-bold text-xl">{error}</p>
-        <Button onClick={() => navigate(-1)} variant="outline" className="rounded-2xl h-12 px-6">
-          ← Volver
+        <p className="font-display font-bold text-xl text-center">{error}</p>
+        <Button onClick={() => navigate('/')} variant="outline" className="rounded-2xl h-12 px-6">
+          ← Volver al inicio
         </Button>
       </div>
     );
@@ -319,23 +258,23 @@ export default function OnlineRoom() {
     return <GamePicker onSelect={handleCreateRoom} onBack={() => navigate(-1)} />;
   }
 
-  if (phase === 'join') {
-    return <JoinByCode onBack={() => setPhase('pick')} onJoin={handleJoinRoom} />;
-  }
-
   if (phase === 'waiting' && room) {
-    return <WaitingLobby room={room} onBack={() => navigate(-1)} />;
+    return <WaitingLobby room={room} onBack={() => navigate('/')} />;
   }
 
   if (phase === 'playing' && room) {
     return (
       <PlayingLobby
         room={room}
-        onBack={() => navigate(-1)}
+        onBack={() => navigate('/')}
         onNavigate={() => navigate(`/play/${room.game}?mode=online&roomId=${room.id}`)}
       />
     );
   }
 
-  return null;
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </div>
+  );
 }
