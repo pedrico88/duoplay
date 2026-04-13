@@ -1,0 +1,39 @@
+{
+  "name": "PlayerProfile",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "nickname": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": "string",
+      "description": "Emoji avatar"
+    },
+    "wins": {
+      "type": "number",
+      "default": 0
+    },
+    "losses": {
+      "type": "number",
+      "default": 0
+    },
+    "games_played": {
+      "type": "number",
+      "default": 0
+    },
+    "favorite_game": {
+      "type": "string"
+    },
+    "game_stats": {
+      "type": "object",
+      "description": "Per-game win/loss stats"
+    }
+  },
+  "required": [
+    "email",
+    "nickname"
+  ]
+}

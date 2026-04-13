@@ -5,7 +5,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+import { GameProvider } from '@/lib/gameContext.jsx';
+import AppLayout from '@/components/duoplay/AppLayout';
+import Home from '@/pages/Home';
+import Games from '@/pages/Games';
+import Profile from '@/pages/Profile';
+import Scores from '@/pages/Scores';
+import PlayGame from '@/pages/PlayGame';
+import OnlineRoom from '@/pages/OnlineRoom';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -32,10 +39,20 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
-    <Routes>
-      {/* Add your page Route elements here */}
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+    <GameProvider>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/scores" element={<Scores />} />
+        </Route>
+        <Route path="/play/:gameId" element={<PlayGame />} />
+        <Route path="/room/:code" element={<OnlineRoom />} />
+        <Route path="/create-room" element={<OnlineRoom />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </GameProvider>
   );
 };
 

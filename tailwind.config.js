@@ -2,8 +2,19 @@
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+    safelist: [
+      'from-violet-500', 'to-purple-600', 'from-red-500', 'to-orange-500',
+      'from-blue-500', 'to-cyan-500', 'from-green-500', 'to-emerald-500',
+      'from-amber-500', 'to-yellow-500', 'from-pink-500', 'to-rose-500',
+      'from-teal-500', 'to-green-500', 'from-indigo-500', 'to-blue-600',
+      'from-fuchsia-500', 'to-purple-500', 'from-cyan-500', 'to-blue-500',
+    ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			display: ['var(--font-display)'],
+  			body: ['var(--font-body)'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

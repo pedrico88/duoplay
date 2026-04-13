@@ -1,0 +1,81 @@
+{
+  "name": "GameRoom",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "6-character room code"
+    },
+    "host_email": {
+      "type": "string"
+    },
+    "guest_email": {
+      "type": "string"
+    },
+    "host_nickname": {
+      "type": "string"
+    },
+    "guest_nickname": {
+      "type": "string"
+    },
+    "host_avatar": {
+      "type": "string"
+    },
+    "guest_avatar": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "waiting",
+        "playing",
+        "finished"
+      ],
+      "default": "waiting"
+    },
+    "game_state": {
+      "type": "object",
+      "description": "Current game state JSON"
+    },
+    "current_turn": {
+      "type": "string",
+      "description": "Email of player whose turn it is"
+    },
+    "winner": {
+      "type": "string"
+    },
+    "chat_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "emoji": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "host_score": {
+      "type": "number",
+      "default": 0
+    },
+    "guest_score": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "code",
+    "host_email",
+    "game"
+  ]
+}
