@@ -6,8 +6,8 @@ import RockPaperScissors from './games/RockPaperScissors';
 import WordGuess from './games/WordGuess';
 import TapRace from './games/TapRace';
 import Trivia from './games/Trivia';
-import Battleship from './games/Battleship';
-import Dice from './games/Dice';
+import TruthOrDare from './games/TruthOrDare';
+import GuessNumber from './games/GuessNumber';
 import Memory from './games/Memory';
 import MathRace from './games/MathRace';
 
@@ -18,8 +18,8 @@ const GAME_MAP = {
   wordguess: WordGuess,
   taprace: TapRace,
   trivia: Trivia,
-  battleship: Battleship,
-  dice: Dice,
+  truthordare: TruthOrDare,
+  guessnumber: GuessNumber,
   memory: Memory,
   mathrace: MathRace,
 };
