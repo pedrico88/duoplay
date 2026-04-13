@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useGame } from '@/lib/gameContext.jsx';
 import { GAMES } from '@/lib/gameData';
-import { Copy, Check, Loader2 } from 'lucide-react';
+import { Copy, Check, Loader2, ArrowLeft } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import TurnIndicator from '@/components/duoplay/TurnIndicator';
 
 function generateCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -24,6 +26,8 @@ export default function OnlineRoom() {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
   const [selectedGame, setSelectedGame] = useState(null);
+  const { toast } = useToast();
+  const [prevTurn, setPrevTurn] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -82,16 +86,32 @@ export default function OnlineRoom() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Subscribe to room changes
+  // Subscribe to room changes + turn notifications
   useEffect(() => {
     if (!room?.id) return;
-    const unsub = base44.entities.GameRoom.subscribe((event) => {
+    const unsub = base44.entities.GameRoom.subscribe(async (event) => {
       if (event.id === room.id) {
-        setRoom(event.data);
+        const newRoom = event.data;
+        setRoom(newRoom);
+
+        // Notify when it becomes this user's turn
+        const user = await base44.auth.me();
+        if (
+          newRoom.current_turn === user.email &&
+          prevTurn !== user.email &&
+          newRoom.status === 'playing'
+        ) {
+          toast({
+            title: '¡Es tu turno! 🎯',
+            description: 'Haz tu movimiento ahora',
+            duration: 3000,
+          });
+        }
+        setPrevTurn(newRoom.current_turn);
       }
     });
     return unsub;
-  }, [room?.id]);
+  }, [room?.id, prevTurn]);
 
   if (loading) {
     return (
@@ -106,8 +126,8 @@ export default function OnlineRoom() {
       <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
         <div className="text-4xl">😕</div>
         <p className="font-display font-bold text-lg">{error}</p>
-        <Button onClick={() => navigate('/')} variant="outline" className="rounded-xl">
-          Volver al inicio
+        <Button onClick={() => navigate(-1)} variant="outline" className="rounded-xl">
+          Volver atrás
         </Button>
       </div>
     );
@@ -117,6 +137,9 @@ export default function OnlineRoom() {
   if (!room) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-6">
+        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <h2 className="font-display text-xl font-bold">Crear Sala Online</h2>
         <p className="text-sm text-muted-foreground text-center">Elige un juego para la sala</p>
         <div className="grid grid-cols-2 gap-3 max-w-xs w-full">
@@ -149,7 +172,10 @@ export default function OnlineRoom() {
   // Waiting room
   if (room.status === 'waiting') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-6">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-6 relative">
+        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -179,7 +205,10 @@ export default function OnlineRoom() {
   // Game in progress - navigate to game
   if (room.status === 'playing' && room.game) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-4 relative">
+        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 p-2 rounded-full bg-card border border-border">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <div className="text-5xl">🎮</div>
         <h2 className="font-display text-xl font-bold">¡Sala conectada!</h2>
         <div className="flex items-center gap-3">
@@ -189,6 +218,11 @@ export default function OnlineRoom() {
           <span className="font-bold">{room.guest_nickname}</span>
           <span className="text-2xl">{room.guest_avatar}</span>
         </div>
+        {/* Turn indicator */}
+        {room.current_turn && (
+          <TurnIndicator room={room} />
+        )}
+
         <Button
           onClick={() => navigate(`/play/${room.game}?mode=online&roomId=${room.id}`)}
           className="rounded-xl h-12 px-8 font-display"
