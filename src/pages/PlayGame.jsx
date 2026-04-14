@@ -12,6 +12,7 @@ import Memory from './games/Memory';
 import MathRace from './games/MathRace';
 import { useGame } from '@/lib/gameContext.jsx';
 import TournamentBanner from '@/components/duoplay/TournamentBanner';
+import { useAdMob } from '@/lib/useAdMob';
 
 const GAME_MAP = {
   tictactoe: TicTacToe,
@@ -31,6 +32,7 @@ export default function PlayGame() {
   const navigate = useNavigate();
   const { tournament, advanceTournament, endTournament, sessionScore, setSessionScore } = useGame();
   const GameComponent = GAME_MAP[gameId];
+  const { recordGameEnd } = useAdMob(!!tournament);
 
   // Track session score at game start to detect a winner
   const baseScoreRef = useRef({ player1: 0, player2: 0 });
@@ -56,8 +58,20 @@ export default function PlayGame() {
       setGameWinner(winner);
       setGameFinished(true);
       advanceTournament(winner === 'draw' ? null : winner);
+      recordGameEnd();
     }
   }, [sessionScore, tournament, gameFinished]);
+
+  // Detect end of game in normal (non-tournament) mode
+  const normalBaseRef = useRef({ player1: 0, player2: 0 });
+  useEffect(() => {
+    if (tournament) return;
+    const base = normalBaseRef.current;
+    if (sessionScore.player1 > base.player1 || sessionScore.player2 > base.player2) {
+      normalBaseRef.current = { ...sessionScore };
+      recordGameEnd();
+    }
+  }, [sessionScore]);
 
   // Redirect to correct game if somehow on wrong game
   useEffect(() => {
