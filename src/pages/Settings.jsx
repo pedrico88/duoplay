@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LogOut, Trash2, Moon, Sun, Bell, Shield, Info, ChevronRight, AlertTriangle } from 'lucide-react';
+import { LogOut, Trash2, Moon, Sun, Info, ChevronRight, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useGame } from '@/lib/gameContext.jsx';
@@ -71,14 +71,6 @@ export default function Settings() {
           action: null,
           color: 'text-muted-foreground',
           bg: 'bg-muted',
-        },
-        {
-          icon: Shield,
-          label: 'Privacidad',
-          description: 'Los datos se guardan localmente',
-          action: null,
-          color: 'text-secondary',
-          bg: 'bg-secondary/10',
         },
       ],
     },
