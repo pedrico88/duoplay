@@ -1,10 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 const AD_UNIT_ID = 'ca-app-pub-4837637269293646/2944642002';
 
 let admobInitialized = false;
 
+function isNativePlatform() {
+  return typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
+}
+
 async function getAdMob() {
+  if (!isNativePlatform()) return null;
   try {
     const { AdMob } = await import('@capacitor-community/admob');
     if (!admobInitialized) {
@@ -31,12 +36,13 @@ async function showInterstitial() {
   try {
     await AdMob.showInterstitial();
   } catch {}
-  // Pre-load next ad
   prepareInterstitial();
 }
 
-// Preload on import
-prepareInterstitial();
+// Preload on import (only on native)
+if (isNativePlatform()) {
+  prepareInterstitial();
+}
 
 /**
  * useAdMob
@@ -48,7 +54,6 @@ export function useAdMob(isTournament) {
 
   const recordGameEnd = () => {
     if (isTournament) {
-      // Show ad after every tournament game
       showInterstitial();
     } else {
       normalCountRef.current += 1;
