@@ -24,7 +24,8 @@ export default function Home() {
       {/* Theme toggle */}
       <button
         onClick={() => setIsDark(!isDark)}
-        className="absolute top-4 right-4 p-2 rounded-full bg-card border border-border z-10"
+        aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+        className="absolute top-4 right-4 w-11 h-11 flex items-center justify-center rounded-full bg-card border border-border z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         {isDark ? <Sun className="w-5 h-5 text-accent" /> : <Moon className="w-5 h-5" />}
       </button>

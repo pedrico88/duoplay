@@ -27,18 +27,20 @@ export default function CategoryPicker({ activeCategory, onChange }) {
   // ── Desktop: pill row ──────────────────────────────────────────────────────
   if (!isMobile) {
     return (
-      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+      <div role="tablist" aria-label="Categorías de juegos" className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
+            role="tab"
+            aria-selected={activeCategory === cat.id}
             onClick={() => onChange(cat.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
               activeCategory === cat.id
                 ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
                 : 'bg-card border border-border text-muted-foreground hover:border-primary/30'
             }`}
           >
-            <span>{cat.emoji}</span>
+            <span aria-hidden="true">{cat.emoji}</span>
             {cat.name}
           </button>
         ))}
@@ -51,30 +53,33 @@ export default function CategoryPicker({ activeCategory, onChange }) {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <button
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-card border border-border text-sm font-medium min-h-[44px]"
-          style={{ minWidth: 44 }}
+          aria-haspopup="listbox"
+          aria-label={`Categoría: ${active.name}. Toca para cambiar`}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-card border-2 border-border text-sm font-semibold min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span>{active.emoji}</span>
+          <span aria-hidden="true">{active.emoji}</span>
           <span className="text-foreground">{active.name}</span>
-          <ChevronDown className="w-4 h-4 text-muted-foreground ml-1" />
+          <ChevronDown className="w-4 h-4 text-muted-foreground ml-1" aria-hidden="true" />
         </button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="font-display">Categoría</DrawerTitle>
         </DrawerHeader>
-        <div className="px-4 pb-6 grid grid-cols-2 gap-2">
+        <div role="listbox" aria-label="Categorías de juegos" className="px-4 pb-8 grid grid-cols-2 gap-3">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
+              role="option"
+              aria-selected={activeCategory === cat.id}
               onClick={() => { onChange(cat.id); setOpen(false); }}
-              className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-medium transition-all min-h-[48px] ${
+              className={`flex items-center gap-2 px-4 py-4 rounded-2xl text-sm font-semibold transition-all min-h-[56px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
                 activeCategory === cat.id
                   ? 'bg-primary text-primary-foreground shadow-md'
-                  : 'bg-muted text-foreground hover:bg-muted/70'
+                  : 'bg-muted text-foreground hover:bg-muted/70 active:bg-muted'
               }`}
             >
-              <span className="text-lg">{cat.emoji}</span>
+              <span className="text-xl" aria-hidden="true">{cat.emoji}</span>
               {cat.name}
             </button>
           ))}

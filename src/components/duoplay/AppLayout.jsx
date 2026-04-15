@@ -42,8 +42,8 @@ export default function AppLayout() {
     <div className="max-w-lg mx-auto min-h-screen relative">
       {/* Scrollable content area — reserve bottom-nav space to prevent layout shift */}
       <div ref={containerRef} className="min-h-screen overflow-y-auto pb-[env(safe-area-inset-bottom)]">
-        {/* Reserve nav height so content never shifts when nav mounts */}
-        <div style={{ paddingBottom: '64px' }}>
+        {/* Reserve nav height (64px) + safe area so content is never hidden behind nav */}
+        <div style={{ paddingBottom: 'calc(64px + env(safe-area-inset-bottom))' }}>
           <Outlet />
         </div>
       </div>

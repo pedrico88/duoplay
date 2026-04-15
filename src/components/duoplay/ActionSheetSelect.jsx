@@ -31,19 +31,18 @@ export default function ActionSheetSelect({ value, onChange, options, trigger, t
 
   return (
     <>
-      {/* Trigger — wrap in a button if it's just text/jsx */}
-      <div
-        role="button"
-        tabIndex={disabled ? -1 : 0}
+      {/* Trigger — real <button> for correct keyboard/screen-reader semantics */}
+      <button
+        type="button"
+        disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-disabled={disabled}
-        onClick={() => !disabled && setOpen(true)}
-        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !disabled && setOpen(true)}
-        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
+        aria-label={title}
+        onClick={() => setOpen(true)}
+        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl w-full text-left"
       >
         {trigger}
-      </div>
+      </button>
 
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent>

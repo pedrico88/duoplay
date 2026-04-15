@@ -15,24 +15,24 @@ const GameCard = memo(function GameCard({ game, index }) {
         className="block"
         aria-label={`Jugar ${game.name}: ${game.description}`}
       >
-        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${game.color} p-4 h-36 flex flex-col justify-between shadow-lg transform transition-transform`}>
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${game.color} p-4 h-40 flex flex-col justify-between shadow-lg active:scale-[0.97] transition-transform`}>
           {/* Background decoration */}
-          <div className="absolute bottom-2 right-2 text-5xl opacity-20 select-none">
+          <div className="absolute bottom-2 right-2 text-6xl opacity-15 select-none" aria-hidden="true">
             {game.emoji}
           </div>
           <div className="flex items-start gap-2">
-            <span className="text-2xl">{game.emoji}</span>
+            <span className="text-3xl" aria-hidden="true">{game.emoji}</span>
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-display font-bold text-base leading-tight">
                 {game.name}
               </h3>
-              <p className="text-white/70 text-xs mt-0.5 line-clamp-2">
+              <p className="text-white/80 text-xs mt-0.5 line-clamp-2">
                 {game.description}
               </p>
             </div>
           </div>
           <div>
-            <span className="text-white/60 text-[10px] bg-white/20 px-2 py-0.5 rounded-full">
+            <span className="text-white/70 text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium">
               {game.players}
             </span>
           </div>

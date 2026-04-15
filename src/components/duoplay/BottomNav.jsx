@@ -23,13 +23,12 @@ const BottomNav = memo(function BottomNav({ scrollContainerRef }) {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-[0_-1px_12px_rgba(0,0,0,0.08)]"
       role="navigation"
       aria-label="Navegación principal"
     >
-      <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-1 safe-area-bottom">
+      <div className="flex items-center justify-around max-w-lg mx-auto px-1 pt-1 pb-1 safe-area-bottom">
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
-          // A tab is "active" if current path is the tab root or nested within it
           const isActive = location.pathname === path ||
             (path !== '/' && location.pathname.startsWith(path));
           return (
@@ -38,24 +37,23 @@ const BottomNav = memo(function BottomNav({ scrollContainerRef }) {
               onClick={() => handleTabPress(path)}
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
-              className="relative flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-colors"
-              style={{ minWidth: 44, minHeight: 44 }}
+              className="relative flex flex-col items-center gap-1 py-2 px-4 rounded-2xl min-w-[56px] min-h-[56px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {isActive && (
                 <motion.div
                   layoutId="nav-indicator"
-                  className="absolute inset-0 bg-primary/10 rounded-xl"
+                  className="absolute inset-0 bg-primary/12 rounded-2xl"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
               <Icon
-                className={`w-5 h-5 relative z-10 transition-colors ${
+                className={`w-6 h-6 relative z-10 transition-colors ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
                 aria-hidden="true"
               />
               <span
-                className={`text-[10px] font-medium relative z-10 transition-colors ${
+                className={`text-[11px] font-semibold relative z-10 transition-colors leading-none ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
