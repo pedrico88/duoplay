@@ -31,18 +31,18 @@ export default function Scores() {
                 {sessionScore.player1}
               </div>
               <p className="text-sm font-medium mt-2">Jugador 1</p>
-              <div className="flex gap-1 mt-2">
+              <div className="flex gap-2 mt-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="rounded-full h-8 w-8 p-0"
+                  className="rounded-full h-11 w-11 p-0 text-lg"
                   onClick={() => setSessionScore(p => ({ ...p, player1: Math.max(0, p.player1 - 1) }))}
                 >
                   -
                 </Button>
                 <Button
                   size="sm"
-                  className="rounded-full h-8 w-8 p-0"
+                  className="rounded-full h-11 w-11 p-0 text-lg"
                   onClick={() => setSessionScore(p => ({ ...p, player1: p.player1 + 1 }))}
                 >
                   +
@@ -57,18 +57,18 @@ export default function Scores() {
                 {sessionScore.player2}
               </div>
               <p className="text-sm font-medium mt-2">Jugador 2</p>
-              <div className="flex gap-1 mt-2">
+              <div className="flex gap-2 mt-2">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="rounded-full h-8 w-8 p-0"
+                  className="rounded-full h-11 w-11 p-0 text-lg"
                   onClick={() => setSessionScore(p => ({ ...p, player2: Math.max(0, p.player2 - 1) }))}
                 >
                   -
                 </Button>
                 <Button
                   size="sm"
-                  className="rounded-full h-8 w-8 p-0"
+                  className="rounded-full h-11 w-11 p-0 text-lg"
                   onClick={() => setSessionScore(p => ({ ...p, player2: p.player2 + 1 }))}
                 >
                   +
