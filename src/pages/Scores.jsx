@@ -25,7 +25,7 @@ export default function Scores() {
         >
           <p className="text-sm text-muted-foreground mb-6">¿Quién va ganando hoy?</p>
 
-          <div className="flex items-center justify-center gap-8">
+          <div className="flex items-center justify-center gap-8" role="group" aria-label="Marcador de sesión">
             <div>
               <div className="text-5xl font-display font-bold text-primary">
                 {sessionScore.player1}
@@ -36,6 +36,7 @@ export default function Scores() {
                   size="sm"
                   variant="outline"
                   className="rounded-full h-11 w-11 p-0 text-lg"
+                  aria-label="Restar punto Jugador 1"
                   onClick={() => setSessionScore(p => ({ ...p, player1: Math.max(0, p.player1 - 1) }))}
                 >
                   -
@@ -43,6 +44,7 @@ export default function Scores() {
                 <Button
                   size="sm"
                   className="rounded-full h-11 w-11 p-0 text-lg"
+                  aria-label="Sumar punto Jugador 1"
                   onClick={() => setSessionScore(p => ({ ...p, player1: p.player1 + 1 }))}
                 >
                   +
@@ -62,6 +64,7 @@ export default function Scores() {
                   size="sm"
                   variant="outline"
                   className="rounded-full h-11 w-11 p-0 text-lg"
+                  aria-label="Restar punto Jugador 2"
                   onClick={() => setSessionScore(p => ({ ...p, player2: Math.max(0, p.player2 - 1) }))}
                 >
                   -
@@ -69,6 +72,7 @@ export default function Scores() {
                 <Button
                   size="sm"
                   className="rounded-full h-11 w-11 p-0 text-lg"
+                  aria-label="Sumar punto Jugador 2"
                   onClick={() => setSessionScore(p => ({ ...p, player2: p.player2 + 1 }))}
                 >
                   +

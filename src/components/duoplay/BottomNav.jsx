@@ -33,7 +33,7 @@ export default function BottomNav({ scrollContainerRef }) {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border" role="navigation" aria-label="Navegación principal">
       <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-1 safe-area-bottom">
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
@@ -41,7 +41,8 @@ export default function BottomNav({ scrollContainerRef }) {
             <button
               key={path}
               onClick={() => handleTabPress(path)}
-              // Minimum 44×44px tap target
+              aria-label={label}
+              aria-current={isActive ? 'page' : undefined}
               className="relative flex flex-col items-center gap-0.5 py-2 px-3 rounded-xl transition-colors"
               style={{ minWidth: 44, minHeight: 44 }}
             >

@@ -42,12 +42,15 @@ export default function Profile() {
             <div className="text-6xl mb-2">{selectedAvatar}</div>
             <p className="text-sm text-muted-foreground">Elige tu avatar</p>
           </div>
-          <div className="grid grid-cols-8 gap-2 mb-6">
+          <div className="grid grid-cols-8 gap-2 mb-6" role="radiogroup" aria-label="Seleccionar avatar">
             {AVATARS.map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => setSelectedAvatar(emoji)}
-                className={`text-2xl p-2 rounded-xl transition-all ${
+                role="radio"
+                aria-checked={selectedAvatar === emoji}
+                aria-label={`Avatar ${emoji}`}
+                className={`text-2xl p-2 rounded-xl transition-all min-h-[44px] min-w-[44px] ${
                   selectedAvatar === emoji
                     ? 'bg-primary/20 scale-110 ring-2 ring-primary'
                     : 'hover:bg-muted'
@@ -83,26 +86,26 @@ export default function Profile() {
           className="bg-card rounded-3xl border border-border p-6 mb-4"
         >
           <h2 className="font-display font-bold text-lg mb-4">📊 Estadísticas</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-muted rounded-2xl p-4 text-center">
-              <Trophy className="w-5 h-5 text-accent mx-auto mb-1" />
+          <div className="grid grid-cols-2 gap-3" role="list" aria-label="Estadísticas">
+            <div className="bg-muted rounded-2xl p-4 text-center" role="listitem">
+              <Trophy className="w-5 h-5 text-accent mx-auto mb-1" aria-hidden="true" />
               <p className="text-2xl font-bold font-display">{profile.wins}</p>
-              <p className="text-xs text-muted-foreground">Victorias</p>
+              <p className="text-sm text-muted-foreground">Victorias</p>
             </div>
-            <div className="bg-muted rounded-2xl p-4 text-center">
-              <Target className="w-5 h-5 text-destructive mx-auto mb-1" />
+            <div className="bg-muted rounded-2xl p-4 text-center" role="listitem">
+              <Target className="w-5 h-5 text-destructive mx-auto mb-1" aria-hidden="true" />
               <p className="text-2xl font-bold font-display">{profile.losses}</p>
-              <p className="text-xs text-muted-foreground">Derrotas</p>
+              <p className="text-sm text-muted-foreground">Derrotas</p>
             </div>
-            <div className="bg-muted rounded-2xl p-4 text-center">
-              <Gamepad2 className="w-5 h-5 text-primary mx-auto mb-1" />
+            <div className="bg-muted rounded-2xl p-4 text-center" role="listitem">
+              <Gamepad2 className="w-5 h-5 text-primary mx-auto mb-1" aria-hidden="true" />
               <p className="text-2xl font-bold font-display">{profile.gamesPlayed}</p>
-              <p className="text-xs text-muted-foreground">Partidas</p>
+              <p className="text-sm text-muted-foreground">Partidas</p>
             </div>
-            <div className="bg-muted rounded-2xl p-4 text-center">
-              <span className="text-lg">📈</span>
+            <div className="bg-muted rounded-2xl p-4 text-center" role="listitem">
+              <span className="text-lg" aria-hidden="true">📈</span>
               <p className="text-2xl font-bold font-display">{winRate}%</p>
-              <p className="text-xs text-muted-foreground">Win Rate</p>
+              <p className="text-sm text-muted-foreground">Win Rate</p>
             </div>
           </div>
         </motion.div>
@@ -144,23 +147,29 @@ export default function Profile() {
           className="bg-card rounded-3xl border border-border p-6"
         >
           <h2 className="font-display font-bold text-lg mb-4">🎨 Apariencia</h2>
-          <div className="flex gap-3">
+          <div className="flex gap-3" role="radiogroup" aria-label="Tema de la aplicación">
             <button
               onClick={() => setIsDark(false)}
-              className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+              role="radio"
+              aria-checked={!isDark}
+              aria-label="Tema claro"
+              className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all min-h-[44px] ${
                 !isDark ? 'border-primary bg-primary/10' : 'border-border'
               }`}
             >
-              <Sun className="w-5 h-5" />
+              <Sun className="w-5 h-5" aria-hidden="true" />
               <span className="text-sm font-medium">Claro</span>
             </button>
             <button
               onClick={() => setIsDark(true)}
-              className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+              role="radio"
+              aria-checked={isDark}
+              aria-label="Tema oscuro"
+              className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all min-h-[44px] ${
                 isDark ? 'border-primary bg-primary/10' : 'border-border'
               }`}
             >
-              <Moon className="w-5 h-5" />
+              <Moon className="w-5 h-5" aria-hidden="true" />
               <span className="text-sm font-medium">Oscuro</span>
             </button>
           </div>
