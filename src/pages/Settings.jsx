@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LogOut, Trash2, Moon, Sun, Info, ChevronRight, AlertTriangle } from 'lucide-react';
+import { LogOut, Trash2, Moon, Sun, Info, ChevronRight, AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -15,20 +15,35 @@ export default function Settings() {
   const { isDark, setIsDark, updateProfile } = useGame();
   const [showDeleteDrawer, setShowDeleteDrawer] = useState(false);
   const [showLogoutDrawer, setShowLogoutDrawer] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    // Small delay so the spinner renders before the redirect
+    await new Promise(r => setTimeout(r, 200));
     base44.auth.logout('/');
   };
 
   const handleDeleteData = async () => {
-    localStorage.removeItem('duoplay_profile');
-    updateProfile({ nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} });
-    setShowDeleteDrawer(false);
+    setDeleting(true);
+    setDeleteError(null);
     try {
+      localStorage.removeItem('duoplay_profile');
+      updateProfile({ nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} });
       await base44.auth.deleteAccount();
     } catch (e) {
-      base44.auth.logout('/');
+      try {
+        base44.auth.logout('/');
+      } catch {
+        setDeleteError('No se pudo eliminar la cuenta. Inténtalo de nuevo.');
+        setDeleting(false);
+        return;
+      }
     }
+    setShowDeleteDrawer(false);
+    setDeleting(false);
   };
 
   const sections = [
@@ -146,15 +161,18 @@ export default function Settings() {
             <Button
               variant="outline"
               onClick={() => setShowLogoutDrawer(false)}
+              disabled={loggingOut}
               className="flex-1 rounded-xl h-12"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleLogout}
-              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90"
+              disabled={loggingOut}
+              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90 text-destructive-foreground gap-2"
             >
-              Cerrar sesión
+              {loggingOut ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
+              {loggingOut ? 'Cerrando…' : 'Cerrar sesión'}
             </Button>
           </div>
         </DrawerContent>
@@ -173,19 +191,27 @@ export default function Settings() {
             Se eliminará tu cuenta y todos los datos permanentemente.{' '}
             <strong>Esta acción no se puede deshacer.</strong>
           </div>
+          {deleteError && (
+            <p className="px-4 text-center text-sm text-destructive font-medium" role="alert">
+              {deleteError}
+            </p>
+          )}
           <div className="flex gap-3 px-4 pb-8 pt-4">
             <Button
               variant="outline"
-              onClick={() => setShowDeleteDrawer(false)}
+              onClick={() => { setShowDeleteDrawer(false); setDeleteError(null); }}
+              disabled={deleting}
               className="flex-1 rounded-xl h-12"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleDeleteData}
-              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90"
+              disabled={deleting}
+              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90 text-destructive-foreground gap-2"
             >
-              Eliminar todo
+              {deleting ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
+              {deleting ? 'Eliminando…' : 'Eliminar todo'}
             </Button>
           </div>
         </DrawerContent>

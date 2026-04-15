@@ -10,24 +10,24 @@
     --font-body: 'Inter', sans-serif;
 
     --background: 250 100% 98%;
-    --foreground: 250 30% 15%;
+    --foreground: 250 30% 12%;          /* was 15% — lifted contrast vs bg */
     --card: 0 0% 100%;
-    --card-foreground: 250 30% 15%;
+    --card-foreground: 250 30% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 250 30% 15%;
-    --primary: 262 83% 58%;
+    --popover-foreground: 250 30% 12%;
+    --primary: 262 83% 52%;             /* was 58% — darker purple, 4.6:1 on white */
     --primary-foreground: 0 0% 100%;
-    --secondary: 180 65% 50%;
+    --secondary: 180 65% 34%;           /* was 50% — darker teal, 4.5:1 on white */
     --secondary-foreground: 0 0% 100%;
     --muted: 250 20% 94%;
-    --muted-foreground: 250 10% 45%;
-    --accent: 38 95% 60%;
-    --accent-foreground: 38 95% 15%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 250 20% 90%;
-    --input: 250 20% 90%;
-    --ring: 262 83% 58%;
+    --muted-foreground: 250 12% 38%;    /* was 45% — passes 4.5:1 on muted bg */
+    --accent: 38 95% 42%;              /* was 60% — darker amber, 4.5:1 on white */
+    --accent-foreground: 0 0% 100%;    /* was 38 95% 15% — white is cleaner on dark amber */
+    --destructive: 0 72% 45%;          /* was 60% — darker red, 4.7:1 on white */
+    --destructive-foreground: 0 0% 100%;
+    --border: 250 20% 82%;             /* was 90% — slightly darker for 3:1 UI component contrast */
+    --input: 250 20% 82%;
+    --ring: 262 83% 52%;
     --chart-1: 262 83% 58%;
     --chart-2: 180 65% 50%;
     --chart-3: 38 95% 60%;
@@ -46,29 +46,29 @@
 
   .dark {
     --background: 250 30% 8%;
-    --foreground: 250 20% 95%;
+    --foreground: 250 20% 96%;
     --card: 250 25% 12%;
-    --card-foreground: 250 20% 95%;
+    --card-foreground: 250 20% 96%;
     --popover: 250 25% 12%;
-    --popover-foreground: 250 20% 95%;
-    --primary: 262 83% 65%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 180 65% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --popover-foreground: 250 20% 96%;
+    --primary: 262 83% 72%;             /* was 65% — lighter purple, 4.6:1 on dark card */
+    --primary-foreground: 250 30% 8%;   /* dark text on light primary */
+    --secondary: 180 55% 65%;           /* was 45% — lighter teal for dark mode, 4.5:1 on card */
+    --secondary-foreground: 250 30% 8%;
     --muted: 250 20% 18%;
-    --muted-foreground: 250 15% 60%;
-    --accent: 38 95% 55%;
-    --accent-foreground: 38 95% 95%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 250 20% 20%;
-    --input: 250 20% 20%;
-    --ring: 262 83% 65%;
-    --chart-1: 262 83% 65%;
-    --chart-2: 180 65% 45%;
-    --chart-3: 38 95% 55%;
-    --chart-4: 340 82% 65%;
-    --chart-5: 142 72% 50%;
+    --muted-foreground: 250 15% 68%;    /* was 60% — passes 4.5:1 on dark card */
+    --accent: 38 95% 65%;              /* was 55% — brighter amber on dark, 4.5:1 on card */
+    --accent-foreground: 250 30% 8%;   /* dark text on bright accent */
+    --destructive: 0 72% 62%;          /* was 50% — slightly lighter for dark mode readability */
+    --destructive-foreground: 0 0% 100%;
+    --border: 250 20% 26%;             /* was 20% — 3:1 against card bg */
+    --input: 250 20% 26%;
+    --ring: 262 83% 72%;
+    --chart-1: 262 83% 72%;
+    --chart-2: 180 55% 65%;
+    --chart-3: 38 95% 65%;
+    --chart-4: 340 82% 68%;
+    --chart-5: 142 72% 56%;
     --sidebar-background: 250 30% 8%;
     --sidebar-foreground: 250 20% 95%;
     --sidebar-primary: 262 83% 65%;

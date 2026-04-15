@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
+import NativeHeader from '@/components/duoplay/NativeHeader';
 
 const TRUTHS = [
   '¿Cuál es tu mayor miedo?',
@@ -66,17 +67,7 @@ export default function TruthOrDare() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500/10 to-cyan-500/10 flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🎯🔥</span>
-          <span className="font-display font-bold">Verdad o Reto</span>
-        </div>
-        <div className="w-10" />
-      </div>
+      <NativeHeader title="Verdad o Reto" subtitle="🎯🔥" />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
         {/* Current player */}
