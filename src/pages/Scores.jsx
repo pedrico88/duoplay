@@ -1,11 +1,19 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Button } from '@/components/ui/button';
 import { RotateCcw } from 'lucide-react';
 
 export default function Scores() {
-  const { sessionScore, setSessionScore, profile } = useGame();
+  const { sessionScore, setSessionScore } = useGame();
+
+  // Optimistic update helpers — state is local so updates are instant
+  const adjustScore = useCallback((player, delta) => {
+    setSessionScore(prev => ({
+      ...prev,
+      [player]: Math.max(0, prev[player] + delta),
+    }));
+  }, [setSessionScore]);
 
   return (
     <div className="min-h-screen pb-24 px-4">
@@ -26,54 +34,74 @@ export default function Scores() {
           <p className="text-sm text-muted-foreground mb-6">¿Quién va ganando hoy?</p>
 
           <div className="flex items-center justify-center gap-8" role="group" aria-label="Marcador de sesión">
-            <div>
-              <div className="text-5xl font-display font-bold text-primary">
-                {sessionScore.player1}
-              </div>
-              <p className="text-sm font-medium mt-2">Jugador 1</p>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-full h-11 w-11 p-0 text-lg"
-                  aria-label="Restar punto Jugador 1"
-                  onClick={() => setSessionScore(p => ({ ...p, player1: Math.max(0, p.player1 - 1) }))}
+            {/* Player 1 */}
+            <div className="flex flex-col items-center">
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={sessionScore.player1}
+                  initial={{ y: -12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 12, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="text-5xl font-display font-bold text-primary tabular-nums"
+                  aria-live="polite"
+                  aria-label={`Jugador 1: ${sessionScore.player1} puntos`}
                 >
-                  -
+                  {sessionScore.player1}
+                </motion.div>
+              </AnimatePresence>
+              <p className="text-sm font-medium mt-2">Jugador 1</p>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  variant="outline"
+                  className="rounded-full h-11 w-11 p-0 text-xl leading-none"
+                  aria-label="Restar punto Jugador 1"
+                  onClick={() => adjustScore('player1', -1)}
+                >
+                  −
                 </Button>
                 <Button
-                  size="sm"
-                  className="rounded-full h-11 w-11 p-0 text-lg"
+                  className="rounded-full h-11 w-11 p-0 text-xl leading-none"
                   aria-label="Sumar punto Jugador 1"
-                  onClick={() => setSessionScore(p => ({ ...p, player1: p.player1 + 1 }))}
+                  onClick={() => adjustScore('player1', 1)}
                 >
                   +
                 </Button>
               </div>
             </div>
 
-            <div className="text-3xl font-display text-muted-foreground">VS</div>
+            <div className="text-3xl font-display text-muted-foreground select-none">VS</div>
 
-            <div>
-              <div className="text-5xl font-display font-bold text-secondary">
-                {sessionScore.player2}
-              </div>
-              <p className="text-sm font-medium mt-2">Jugador 2</p>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-full h-11 w-11 p-0 text-lg"
-                  aria-label="Restar punto Jugador 2"
-                  onClick={() => setSessionScore(p => ({ ...p, player2: Math.max(0, p.player2 - 1) }))}
+            {/* Player 2 */}
+            <div className="flex flex-col items-center">
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={sessionScore.player2}
+                  initial={{ y: -12, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: 12, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="text-5xl font-display font-bold text-secondary tabular-nums"
+                  aria-live="polite"
+                  aria-label={`Jugador 2: ${sessionScore.player2} puntos`}
                 >
-                  -
+                  {sessionScore.player2}
+                </motion.div>
+              </AnimatePresence>
+              <p className="text-sm font-medium mt-2">Jugador 2</p>
+              <div className="flex gap-2 mt-3">
+                <Button
+                  variant="outline"
+                  className="rounded-full h-11 w-11 p-0 text-xl leading-none"
+                  aria-label="Restar punto Jugador 2"
+                  onClick={() => adjustScore('player2', -1)}
+                >
+                  −
                 </Button>
                 <Button
-                  size="sm"
-                  className="rounded-full h-11 w-11 p-0 text-lg"
+                  className="rounded-full h-11 w-11 p-0 text-xl leading-none"
                   aria-label="Sumar punto Jugador 2"
-                  onClick={() => setSessionScore(p => ({ ...p, player2: p.player2 + 1 }))}
+                  onClick={() => adjustScore('player2', 1)}
                 >
                   +
                 </Button>
@@ -96,7 +124,8 @@ export default function Scores() {
 
         <Button
           variant="outline"
-          className="w-full rounded-xl gap-2"
+          className="w-full rounded-xl h-12 gap-2"
+          aria-label="Reiniciar marcador"
           onClick={() => setSessionScore({ player1: 0, player2: 0 })}
         >
           <RotateCcw className="w-4 h-4" />

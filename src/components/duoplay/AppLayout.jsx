@@ -38,9 +38,12 @@ export default function AppLayout() {
 
   return (
     <div className="max-w-lg mx-auto min-h-screen relative">
-      {/* Scrollable content area — each tab's scroll is tracked here */}
-      <div ref={containerRef} className="min-h-screen overflow-y-auto">
-        <Outlet />
+      {/* Scrollable content area — reserve bottom-nav space to prevent layout shift */}
+      <div ref={containerRef} className="min-h-screen overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+        {/* Reserve nav height so content never shifts when nav mounts */}
+        <div style={{ paddingBottom: '64px' }}>
+          <Outlet />
+        </div>
       </div>
       <BottomNav scrollContainerRef={containerRef} />
     </div>

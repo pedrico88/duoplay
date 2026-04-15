@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LogOut, Trash2, Moon, Sun, Info, ChevronRight, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { useGame } from '@/lib/gameContext.jsx';
 import { base44 } from '@/api/base44Client';
 
 export default function Settings() {
   const { isDark, setIsDark, updateProfile } = useGame();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [showDeleteDrawer, setShowDeleteDrawer] = useState(false);
+  const [showLogoutDrawer, setShowLogoutDrawer] = useState(false);
 
   const handleLogout = () => {
     base44.auth.logout('/');
@@ -18,7 +23,7 @@ export default function Settings() {
   const handleDeleteData = async () => {
     localStorage.removeItem('duoplay_profile');
     updateProfile({ nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} });
-    setShowDeleteDialog(false);
+    setShowDeleteDrawer(false);
     try {
       await base44.auth.deleteAccount();
     } catch (e) {
@@ -47,7 +52,7 @@ export default function Settings() {
           icon: LogOut,
           label: 'Cerrar sesión',
           description: 'Salir de tu cuenta',
-          action: () => setShowLogoutDialog(true),
+          action: () => setShowLogoutDrawer(true),
           color: 'text-primary',
           bg: 'bg-primary/10',
         },
@@ -55,7 +60,7 @@ export default function Settings() {
           icon: Trash2,
           label: 'Eliminar cuenta',
           description: 'Borra cuenta y todos los datos',
-          action: () => setShowDeleteDialog(true),
+          action: () => setShowDeleteDrawer(true),
           color: 'text-destructive',
           bg: 'bg-destructive/10',
         },
@@ -109,16 +114,17 @@ export default function Settings() {
                   <button
                     onClick={item.action || undefined}
                     disabled={!item.action}
-                    className="w-full flex items-center gap-4 px-4 py-4 hover:bg-muted/50 transition-colors disabled:opacity-100 disabled:cursor-default"
+                    aria-label={item.label}
+                    className="w-full flex items-center gap-4 px-4 py-4 min-h-[56px] hover:bg-muted/50 transition-colors disabled:opacity-100 disabled:cursor-default"
                   >
                     <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0`}>
-                      <item.icon className={`w-5 h-5 ${item.color}`} />
+                      <item.icon className={`w-5 h-5 ${item.color}`} aria-hidden="true" />
                     </div>
                     <div className="flex-1 text-left">
                       <p className="font-medium text-sm">{item.label}</p>
                       <p className="text-xs text-muted-foreground">{item.description}</p>
                     </div>
-                    {item.action && <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+                    {item.action && <ChevronRight className="w-4 h-4 text-muted-foreground" aria-hidden="true" />}
                   </button>
                 </div>
               ))}
@@ -127,48 +133,63 @@ export default function Settings() {
         ))}
       </div>
 
-      {/* Logout Dialog */}
-      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="font-display text-center">¿Cerrar sesión?</DialogTitle>
-          </DialogHeader>
-          <div className="text-center text-muted-foreground text-sm mb-4">
+      {/* ── Logout Drawer ── */}
+      <Drawer open={showLogoutDrawer} onOpenChange={setShowLogoutDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle className="font-display text-center">¿Cerrar sesión?</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-2 text-center text-muted-foreground text-sm">
             Tendrás que volver a iniciar sesión para acceder a DúoPlay.
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setShowLogoutDialog(false)} className="flex-1 rounded-xl">
+          <div className="flex gap-3 px-4 pb-8 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowLogoutDrawer(false)}
+              className="flex-1 rounded-xl h-12"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleLogout} className="flex-1 rounded-xl bg-destructive hover:bg-destructive/90">
+            <Button
+              onClick={handleLogout}
+              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90"
+            >
               Cerrar sesión
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
 
-      {/* Delete Data Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="rounded-3xl max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="font-display text-center flex items-center justify-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
+      {/* ── Delete Account Drawer ── */}
+      <Drawer open={showDeleteDrawer} onOpenChange={setShowDeleteDrawer}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle className="font-display text-center flex items-center justify-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-destructive" aria-hidden="true" />
               Eliminar datos
-            </DialogTitle>
-          </DialogHeader>
-          <div className="text-center text-muted-foreground text-sm mb-4">
-            Se eliminará tu cuenta y todos los datos permanentemente. Esta acción <strong>no se puede deshacer</strong>.
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-2 text-center text-muted-foreground text-sm">
+            Se eliminará tu cuenta y todos los datos permanentemente.{' '}
+            <strong>Esta acción no se puede deshacer.</strong>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} className="flex-1 rounded-xl">
+          <div className="flex gap-3 px-4 pb-8 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDrawer(false)}
+              className="flex-1 rounded-xl h-12"
+            >
               Cancelar
             </Button>
-            <Button onClick={handleDeleteData} className="flex-1 rounded-xl bg-destructive hover:bg-destructive/90">
+            <Button
+              onClick={handleDeleteData}
+              className="flex-1 rounded-xl h-12 bg-destructive hover:bg-destructive/90"
+            >
               Eliminar todo
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }
