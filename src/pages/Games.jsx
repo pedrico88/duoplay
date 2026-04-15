@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
@@ -9,7 +9,10 @@ import CategoryPicker from '@/components/duoplay/CategoryPicker';
 
 export default function Games() {
   const [activeCategory, setActiveCategory] = useState('all');
-  const filtered = activeCategory === 'all' ? GAMES : GAMES.filter(g => g.category === activeCategory);
+  const filtered = useMemo(
+    () => activeCategory === 'all' ? GAMES : GAMES.filter(g => g.category === activeCategory),
+    [activeCategory]
+  );
 
   const handleRefresh = useCallback(() => new Promise(r => setTimeout(r, 600)), []);
 

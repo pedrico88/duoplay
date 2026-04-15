@@ -1,7 +1,8 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { memo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Home, Gamepad2, User, Trophy, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTabPress, TAB_ROOTS } from '@/lib/tabNavContext.jsx';
 
 const NAV_ITEMS = [
   { path: '/', icon: Home, label: 'Inicio' },
@@ -11,32 +12,26 @@ const NAV_ITEMS = [
   { path: '/settings', icon: Settings, label: 'Ajustes' },
 ];
 
-export default function BottomNav({ scrollContainerRef }) {
+const BottomNav = memo(function BottomNav({ scrollContainerRef }) {
   const location = useLocation();
-  const navigate = useNavigate();
+  const handleTabPress = useTabPress(scrollContainerRef);
 
   // Hide nav during active games or rooms
   if (location.pathname.startsWith('/play/')) return null;
   if (location.pathname.startsWith('/room/')) return null;
   if (location.pathname.startsWith('/tournament')) return null;
 
-  const handleTabPress = (path) => {
-    const isActive = location.pathname === path;
-    if (isActive) {
-      // Re-tap: scroll back to top of this tab
-      if (scrollContainerRef?.current) {
-        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    } else {
-      navigate(path);
-    }
-  };
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border" role="navigation" aria-label="Navegación principal">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-xl border-t border-border"
+      role="navigation"
+      aria-label="Navegación principal"
+    >
       <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-1 safe-area-bottom">
         {NAV_ITEMS.map(({ path, icon: Icon, label }) => {
-          const isActive = location.pathname === path;
+          // A tab is "active" if current path is the tab root or nested within it
+          const isActive = location.pathname === path ||
+            (path !== '/' && location.pathname.startsWith(path));
           return (
             <button
               key={path}
@@ -57,6 +52,7 @@ export default function BottomNav({ scrollContainerRef }) {
                 className={`w-5 h-5 relative z-10 transition-colors ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
+                aria-hidden="true"
               />
               <span
                 className={`text-[10px] font-medium relative z-10 transition-colors ${
@@ -71,4 +67,6 @@ export default function BottomNav({ scrollContainerRef }) {
       </div>
     </nav>
   );
-}
+});
+
+export default BottomNav;

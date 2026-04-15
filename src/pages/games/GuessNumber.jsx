@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '@/lib/gameContext.jsx';
+import GameHeader from '@/components/duoplay/GameHeader';
 
 const MAX_ATTEMPTS = 7;
 
@@ -102,18 +102,13 @@ export default function GuessNumber() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500/10 to-blue-500/10 flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-bold text-primary">{PLAYERS[0]}: {scores.p1}pts</span>
-          <span className="text-xl">🔢</span>
-          <span className="text-sm font-bold text-secondary">{PLAYERS[1]}: {scores.p2}pts</span>
-        </div>
-        <div className="text-xs text-muted-foreground">R{round}/4</div>
-      </div>
+      <GameHeader
+        emoji="🔢🎯"
+        player1Score={scores.p1}
+        player2Score={scores.p2}
+        player1Name="J1"
+        player2Name="J2"
+      />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
         <AnimatePresence mode="wait">

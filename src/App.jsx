@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { GameProvider } from '@/lib/gameContext.jsx';
+import { TabNavProvider } from '@/lib/tabNavContext.jsx';
 import ErrorBoundary from '@/components/duoplay/ErrorBoundary';
 import OfflineBanner from '@/components/duoplay/OfflineBanner';
 
@@ -85,7 +86,9 @@ const AuthenticatedApp = () => {
 
   return (
     <GameProvider>
-      <AnimatedRoutes />
+      <TabNavProvider>
+        <AnimatedRoutes />
+      </TabNavProvider>
     </GameProvider>
   );
 };

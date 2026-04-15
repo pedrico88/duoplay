@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-export default function GameCard({ game, index }) {
+const GameCard = memo(function GameCard({ game, index }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -40,4 +40,6 @@ export default function GameCard({ game, index }) {
       </Link>
     </motion.div>
   );
-}
+});
+
+export default GameCard;
