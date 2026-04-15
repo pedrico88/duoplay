@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { GAMES } from '@/lib/gameData';
 import { useGame } from '@/lib/gameContext.jsx';
-import { ArrowLeft, Trophy, ChevronRight, X } from 'lucide-react';
+import { Trophy, ChevronRight, X } from 'lucide-react';
+import NativeHeader from '@/components/duoplay/NativeHeader';
 
 export default function Tournament() {
   const navigate = useNavigate();
@@ -25,20 +26,15 @@ export default function Tournament() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/games')} className="rounded-full">
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-accent" />
-          <span className="font-display font-bold text-lg">Modo Torneo</span>
-        </div>
-        <div className="w-10" />
-      </div>
+      <NativeHeader
+        title="Modo Torneo"
+        subtitle="Elige 2 o más juegos"
+        backTo="/games"
+        rightSlot={<Trophy className="w-5 h-5 text-accent" aria-hidden="true" />}
+      />
 
       <div className="flex-1 overflow-y-auto pb-32">
-        <div className="px-4 pt-5 pb-3">
+        <div className="px-4 pt-4 pb-3">
           <p className="text-muted-foreground text-sm">
             Elige <span className="font-semibold text-foreground">2 o más juegos</span>. Se jugarán en orden y el jugador con más victorias al final gana el torneo.
           </p>

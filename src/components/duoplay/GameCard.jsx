@@ -8,9 +8,14 @@ export default function GameCard({ game, index }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
+      whileTap={{ scale: 0.96 }}
     >
-      <Link to={`/play/${game.id}`} className="block">
-        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${game.color} p-4 h-36 flex flex-col justify-between shadow-lg active:scale-[0.97] transform transition-transform`}>
+      <Link
+        to={`/play/${game.id}`}
+        className="block"
+        aria-label={`Jugar ${game.name}: ${game.description}`}
+      >
+        <div className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${game.color} p-4 h-36 flex flex-col justify-between shadow-lg transform transition-transform`}>
           {/* Background decoration */}
           <div className="absolute bottom-2 right-2 text-5xl opacity-20 select-none">
             {game.emoji}

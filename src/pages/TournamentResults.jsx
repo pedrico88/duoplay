@@ -128,11 +128,11 @@ export default function TournamentResults() {
 
         {/* Actions */}
         <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExit} className="flex-1 rounded-2xl gap-2">
-            <Home className="w-4 h-4" /> Salir
+          <Button variant="outline" onClick={handleExit} className="flex-1 rounded-2xl h-12 gap-2" aria-label="Salir al menú de juegos">
+            <Home className="w-4 h-4" aria-hidden="true" /> Salir
           </Button>
-          <Button onClick={handlePlayAgain} className="flex-1 rounded-2xl bg-primary gap-2 font-display font-bold">
-            <RotateCcw className="w-4 h-4" /> Repetir
+          <Button onClick={handlePlayAgain} className="flex-1 rounded-2xl h-12 bg-primary gap-2 font-display font-bold" aria-label="Repetir el torneo">
+            <RotateCcw className="w-4 h-4" aria-hidden="true" /> Repetir
           </Button>
         </div>
       </motion.div>

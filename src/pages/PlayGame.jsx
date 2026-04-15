@@ -97,7 +97,10 @@ export default function PlayGame() {
         <div className="text-center">
           <div className="text-5xl mb-4">🎮</div>
           <h2 className="font-display text-xl font-bold mb-2">Juego no encontrado</h2>
-          <button onClick={() => navigate('/games')} className="text-primary underline text-sm">
+          <button
+            onClick={() => navigate('/games')}
+            className="text-primary underline text-sm min-h-[44px] inline-flex items-center"
+          >
             Volver a juegos
           </button>
         </div>
