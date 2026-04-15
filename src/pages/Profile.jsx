@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useGame } from '@/lib/gameContext.jsx';
-import { Sun, Moon, Trophy, Target, Gamepad2 } from 'lucide-react';
+import { Sun, Moon, Trophy, Target, Gamepad2, Loader2, CheckCircle2 } from 'lucide-react';
 import { GAMES } from '@/lib/gameData';
 import PullToRefresh from '@/components/duoplay/PullToRefresh';
 
@@ -11,9 +11,17 @@ export default function Profile() {
   const { profile, updateProfile, AVATARS, isDark, setIsDark } = useGame();
   const [nickname, setNickname] = useState(profile.nickname);
   const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar);
+  const [saveState, setSaveState] = useState('idle'); // idle | saving | saved | error
 
-  const handleSave = () => {
-    updateProfile({ nickname, avatar: selectedAvatar });
+  const handleSave = async () => {
+    if (!nickname.trim()) return;
+    setSaveState('saving');
+    // Optimistic update — apply immediately to context
+    updateProfile({ nickname: nickname.trim(), avatar: selectedAvatar });
+    // Simulate brief async persistence (localStorage is sync, but keeps the UX consistent)
+    await new Promise(r => setTimeout(r, 400));
+    setSaveState('saved');
+    setTimeout(() => setSaveState('idle'), 2000);
   };
 
   const winRate = profile.gamesPlayed > 0 ? Math.round((profile.wins / profile.gamesPlayed) * 100) : 0;
@@ -72,8 +80,16 @@ export default function Profile() {
                 maxLength={15}
               />
             </div>
-            <Button onClick={handleSave} className="w-full rounded-xl h-12 font-display">
-              Guardar
+            <Button
+              onClick={handleSave}
+              disabled={saveState === 'saving' || !nickname.trim()}
+              className={`w-full rounded-xl h-12 font-display gap-2 transition-all ${
+                saveState === 'saved' ? 'bg-green-600 hover:bg-green-600' : ''
+              }`}
+            >
+              {saveState === 'saving' && <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />}
+              {saveState === 'saved' && <CheckCircle2 className="w-4 h-4" aria-hidden="true" />}
+              {saveState === 'saving' ? 'Guardando…' : saveState === 'saved' ? '¡Guardado!' : 'Guardar'}
             </Button>
           </div>
         </motion.div>

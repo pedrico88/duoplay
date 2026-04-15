@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '@/lib/gameContext.jsx';
 import GameHeader from '@/components/duoplay/GameHeader';
+import ActionSheetSelect from '@/components/duoplay/ActionSheetSelect';
 
 const MAX_ATTEMPTS = 7;
 
@@ -140,18 +141,23 @@ export default function GuessNumber() {
                   ✓
                 </Button>
               </div>
-              <div className="flex gap-2 justify-center text-sm text-muted-foreground">
-                <span>Rango:</span>
-                {[{ min: 1, max: 50 }, { min: 1, max: 100 }, { min: 1, max: 200 }].map(r => (
-                  <button
-                    key={r.max}
-                    onClick={() => setRange(r)}
-                    className={`px-2 py-0.5 rounded-full border transition-colors ${range.max === r.max ? 'border-primary text-primary' : 'border-border'}`}
-                  >
-                    {r.min}-{r.max}
-                  </button>
-                ))}
-              </div>
+              <ActionSheetSelect
+                value={range.max}
+                onChange={(v) => setRange({ min: 1, max: v })}
+                title="Rango de números"
+                options={[
+                  { value: 50,  label: '1 – 50',  description: 'Fácil' },
+                  { value: 100, label: '1 – 100', description: 'Normal' },
+                  { value: 200, label: '1 – 200', description: 'Difícil' },
+                ]}
+                trigger={
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-full border-2 border-border bg-card hover:bg-muted/60 active:bg-muted transition-colors cursor-pointer text-sm">
+                    <span className="text-muted-foreground">Rango:</span>
+                    <span className="font-bold text-primary">1–{range.max}</span>
+                    <span className="text-muted-foreground text-xs">▼</span>
+                  </div>
+                }
+              />
             </motion.div>
           )}
 

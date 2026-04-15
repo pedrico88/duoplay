@@ -5,6 +5,7 @@ import GameHeader from '@/components/duoplay/GameHeader';
 import WinnerModal from '@/components/duoplay/WinnerModal';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Button } from '@/components/ui/button';
+import ActionSheetSelect from '@/components/duoplay/ActionSheetSelect';
 
 function generateProblem() {
   const ops = ['+', '-', '×'];
@@ -101,6 +102,12 @@ export default function MathRace() {
     setTimeLeft(10);
   };
 
+  const ROUNDS_OPTIONS = [
+    { value: 10, label: '10 rondas', description: 'Partida rápida' },
+    { value: 20, label: '20 rondas', description: 'Partida completa' },
+    { value: 30, label: '30 rondas', description: 'Desafío largo' },
+  ];
+
   if (phase === 'setup') {
     return (
       <div className="min-h-screen flex flex-col">
@@ -108,16 +115,26 @@ export default function MathRace() {
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
           <h2 className="font-display text-xl font-bold">Carrera Matemática</h2>
           <p className="text-sm text-muted-foreground">Resuelve más rápido que tu rival</p>
-          <div className="flex gap-4">
-            <Button onClick={() => startGame(10)} className="h-16 w-28 rounded-2xl font-display flex flex-col">
-              <span className="text-xl">10</span>
-              <span className="text-xs opacity-70">rondas</span>
-            </Button>
-            <Button onClick={() => startGame(20)} variant="outline" className="h-16 w-28 rounded-2xl font-display flex flex-col">
-              <span className="text-xl">20</span>
-              <span className="text-xs opacity-70">rondas</span>
-            </Button>
-          </div>
+
+          <ActionSheetSelect
+            value={totalRounds}
+            onChange={(v) => setTotalRounds(v)}
+            options={ROUNDS_OPTIONS}
+            title="Número de rondas"
+            trigger={
+              <div className="flex items-center gap-3 px-5 py-3.5 rounded-2xl border-2 border-border bg-card hover:bg-muted/60 active:bg-muted transition-colors cursor-pointer">
+                <span className="font-display font-bold text-lg">🔢 {totalRounds}</span>
+                <span className="text-xs text-muted-foreground">
+                  {ROUNDS_OPTIONS.find(o => o.value === totalRounds)?.description}
+                </span>
+                <span className="text-muted-foreground text-xs ml-1">▼</span>
+              </div>
+            }
+          />
+
+          <Button onClick={() => startGame(totalRounds)} className="h-14 px-10 rounded-2xl font-display text-lg">
+            ¡Jugar!
+          </Button>
         </div>
       </div>
     );

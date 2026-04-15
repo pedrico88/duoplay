@@ -5,6 +5,7 @@ import GameHeader from '@/components/duoplay/GameHeader';
 import WinnerModal from '@/components/duoplay/WinnerModal';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Button } from '@/components/ui/button';
+import ActionSheetSelect from '@/components/duoplay/ActionSheetSelect';
 
 const EMOJIS = ['🍎', '🍊', '🍋', '🍇', '🍉', '🍓', '🫐', '🥝', '🍑', '🥭'];
 
@@ -89,6 +90,12 @@ export default function TapRace() {
     return () => clearInterval(cleanup);
   }, [phase]);
 
+  const DURATION_OPTIONS = [
+    { value: 30, label: '30 segundos', description: 'Rápido e intenso' },
+    { value: 60, label: '60 segundos', description: 'Ritmo normal' },
+    { value: 90, label: '90 segundos', description: 'Partida larga' },
+  ];
+
   if (phase === 'setup') {
     return (
       <div className="min-h-screen flex flex-col">
@@ -96,16 +103,26 @@ export default function TapRace() {
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
           <h2 className="font-display text-xl font-bold">Puntería</h2>
           <p className="text-sm text-muted-foreground text-center">Toca las frutas de tu lado lo más rápido posible</p>
-          <div className="flex gap-4">
-            <Button onClick={() => startGame(30)} className="h-16 w-28 rounded-2xl font-display text-lg flex flex-col">
-              <span>30s</span>
-              <span className="text-xs opacity-70">Rápido</span>
-            </Button>
-            <Button onClick={() => startGame(60)} variant="outline" className="h-16 w-28 rounded-2xl font-display text-lg flex flex-col">
-              <span>60s</span>
-              <span className="text-xs opacity-70">Normal</span>
-            </Button>
-          </div>
+
+          <ActionSheetSelect
+            value={duration}
+            onChange={(v) => setDuration(v)}
+            options={DURATION_OPTIONS}
+            title="Duración de la partida"
+            trigger={
+              <div className="flex items-center gap-3 px-5 py-3.5 rounded-2xl border-2 border-border bg-card hover:bg-muted/60 active:bg-muted transition-colors cursor-pointer">
+                <span className="font-display font-bold text-lg">⏱ {duration}s</span>
+                <span className="text-xs text-muted-foreground">
+                  {DURATION_OPTIONS.find(o => o.value === duration)?.description}
+                </span>
+                <span className="text-muted-foreground text-xs ml-1">▼</span>
+              </div>
+            }
+          />
+
+          <Button onClick={() => startGame(duration)} className="h-14 px-10 rounded-2xl font-display text-lg">
+            ¡Jugar!
+          </Button>
         </div>
       </div>
     );
