@@ -13,6 +13,7 @@ import MathRace from './games/MathRace';
 import { useGame } from '@/lib/gameContext.jsx';
 import TournamentBanner from '@/components/duoplay/TournamentBanner';
 import { useAdMob } from '@/lib/useAdMob';
+import ErrorBoundary from '@/components/duoplay/ErrorBoundary';
 
 const GAME_MAP = {
   tictactoe: TicTacToe,
@@ -34,53 +35,61 @@ export default function PlayGame() {
   const GameComponent = GAME_MAP[gameId];
   const { recordGameEnd } = useAdMob(!!tournament);
 
-  // Track session score at game start to detect a winner
-  const baseScoreRef = useRef({ player1: 0, player2: 0 });
+  // Tournament mode: snapshot scores when entering a game
+  const baseScoreRef = useRef({ player1: sessionScore.player1, player2: sessionScore.player2 });
   const [gameFinished, setGameFinished] = useState(false);
-  const [gameWinner, setGameWinner] = useState(null); // 'player1' | 'player2' | 'draw'
+  const [gameWinner, setGameWinner] = useState(null);
 
-  // When entering a game in tournament mode, snapshot current scores
+  // Normal mode: track last seen score to avoid double-firing
+  const normalBaseRef = useRef({ player1: sessionScore.player1, player2: sessionScore.player2 });
+  // Guard to prevent re-entrance
+  const processingRef = useRef(false);
+
+  // When gameId changes (tournament navigates to next game), reset state
   useEffect(() => {
-    if (!tournament) return;
-    baseScoreRef.current = { ...sessionScore };
+    baseScoreRef.current = { player1: sessionScore.player1, player2: sessionScore.player2 };
+    normalBaseRef.current = { player1: sessionScore.player1, player2: sessionScore.player2 };
     setGameFinished(false);
     setGameWinner(null);
-  }, [gameId]);
+    processingRef.current = false;
+  }, [gameId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Watch sessionScore for changes (game ended when score increases)
+  // Tournament: detect game end when score increases
   useEffect(() => {
-    if (!tournament || gameFinished) return;
+    if (!tournament || gameFinished || processingRef.current) return;
     const base = baseScoreRef.current;
     const p1Gained = sessionScore.player1 > base.player1;
     const p2Gained = sessionScore.player2 > base.player2;
     if (p1Gained || p2Gained) {
+      processingRef.current = true;
       const winner = p1Gained && !p2Gained ? 'player1' : !p1Gained && p2Gained ? 'player2' : 'draw';
       setGameWinner(winner);
       setGameFinished(true);
       advanceTournament(winner === 'draw' ? null : winner);
       recordGameEnd();
     }
-  }, [sessionScore, tournament, gameFinished]);
+  }, [sessionScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Detect end of game in normal (non-tournament) mode
-  const normalBaseRef = useRef({ player1: 0, player2: 0 });
+  // Normal mode: detect game end
   useEffect(() => {
-    if (tournament) return;
+    if (tournament || processingRef.current) return;
     const base = normalBaseRef.current;
-    if (sessionScore.player1 > base.player1 || sessionScore.player2 > base.player2) {
-      normalBaseRef.current = { ...sessionScore };
+    const p1Gained = sessionScore.player1 > base.player1;
+    const p2Gained = sessionScore.player2 > base.player2;
+    if (p1Gained || p2Gained) {
+      normalBaseRef.current = { player1: sessionScore.player1, player2: sessionScore.player2 };
       recordGameEnd();
     }
-  }, [sessionScore]);
+  }, [sessionScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Redirect to correct game if somehow on wrong game
+  // Redirect if on wrong game in tournament
   useEffect(() => {
     if (!tournament) return;
     const expected = tournament.games[tournament.currentIndex];
     if (expected && gameId !== expected) {
       navigate(`/play/${expected}`, { replace: true });
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!GameComponent) {
     return (
@@ -101,18 +110,20 @@ export default function PlayGame() {
   const handleNextGame = () => {
     setGameFinished(false);
     setGameWinner(null);
+    processingRef.current = false;
     if (isLastGame) {
       navigate('/tournament/results');
     } else {
       const nextGame = tournament.games[tournament.currentIndex];
-      setSessionScore(prev => ({ ...prev })); // no-op to trigger re-render
       navigate(`/play/${nextGame}`);
     }
   };
 
   return (
     <div className="relative">
-      <GameComponent />
+      <ErrorBoundary key={gameId}>
+        <GameComponent />
+      </ErrorBoundary>
       {tournament && gameFinished && (
         <TournamentBanner
           winner={gameWinner}

@@ -4,24 +4,41 @@ const GameContext = createContext(null);
 
 const AVATARS = ['😎', '🤖', '👾', '🦊', '🐉', '🦁', '🐱', '🐼', '🦄', '👻', '🎃', '🤠', '🥷', '🧙', '🦸', '🧛'];
 
+const DEFAULT_PROFILE = { nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} };
+
+function safeLocalStorageGet(key, fallback) {
+  try {
+    const saved = localStorage.getItem(key);
+    if (!saved) return fallback;
+    return JSON.parse(saved);
+  } catch {
+    return fallback;
+  }
+}
+
+function safeLocalStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
 export function GameProvider({ children }) {
   const [profile, setProfile] = useState(() => {
-    const saved = localStorage.getItem('duoplay_profile');
-    return saved ? JSON.parse(saved) : { nickname: '', avatar: '😎', wins: 0, losses: 0, gamesPlayed: 0, gameStats: {} };
+    const saved = safeLocalStorageGet('duoplay_profile', DEFAULT_PROFILE);
+    // Ensure all expected keys exist (migration safety)
+    return { ...DEFAULT_PROFILE, ...saved, gameStats: saved.gameStats || {} };
   });
 
   const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
+    try {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return false;
     }
-    return false;
   });
 
   const [sessionScore, setSessionScore] = useState({ player1: 0, player2: 0 });
-
-  // Tournament state
   const [tournament, setTournament] = useState(null);
-  // tournament: { games: [...gameIds], currentIndex: number, scores: { player1: 0, player2: 0 } }
 
   const startTournament = (gameIds) => {
     setTournament({ games: gameIds, currentIndex: 0, scores: { player1: 0, player2: 0 } });
@@ -40,43 +57,53 @@ export function GameProvider({ children }) {
   const endTournament = () => setTournament(null);
 
   useEffect(() => {
-    localStorage.setItem('duoplay_profile', JSON.stringify(profile));
+    safeLocalStorageSet('duoplay_profile', profile);
   }, [profile]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
+    try {
+      document.documentElement.classList.toggle('dark', isDark);
+    } catch {}
   }, [isDark]);
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e) => setIsDark(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
+    try {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = (e) => setIsDark(e.matches);
+      mq.addEventListener('change', handler);
+      return () => mq.removeEventListener('change', handler);
+    } catch {}
   }, []);
 
   const updateProfile = (updates) => setProfile(prev => ({ ...prev, ...updates }));
-  
+
   const recordWin = (game) => {
     setProfile(prev => ({
       ...prev,
-      wins: prev.wins + 1,
-      gamesPlayed: prev.gamesPlayed + 1,
+      wins: (prev.wins || 0) + 1,
+      gamesPlayed: (prev.gamesPlayed || 0) + 1,
       gameStats: {
         ...prev.gameStats,
-        [game]: { wins: (prev.gameStats?.[game]?.wins || 0) + 1, losses: prev.gameStats?.[game]?.losses || 0 }
-      }
+        [game]: {
+          wins: ((prev.gameStats?.[game]?.wins) || 0) + 1,
+          losses: (prev.gameStats?.[game]?.losses) || 0,
+        },
+      },
     }));
   };
 
   const recordLoss = (game) => {
     setProfile(prev => ({
       ...prev,
-      losses: prev.losses + 1,
-      gamesPlayed: prev.gamesPlayed + 1,
+      losses: (prev.losses || 0) + 1,
+      gamesPlayed: (prev.gamesPlayed || 0) + 1,
       gameStats: {
         ...prev.gameStats,
-        [game]: { wins: prev.gameStats?.[game]?.wins || 0, losses: (prev.gameStats?.[game]?.losses || 0) + 1 }
-      }
+        [game]: {
+          wins: (prev.gameStats?.[game]?.wins) || 0,
+          losses: ((prev.gameStats?.[game]?.losses) || 0) + 1,
+        },
+      },
     }));
   };
 
@@ -86,7 +113,7 @@ export function GameProvider({ children }) {
       isDark, setIsDark,
       sessionScore, setSessionScore,
       tournament, startTournament, advanceTournament, endTournament,
-      AVATARS
+      AVATARS,
     }}>
       {children}
     </GameContext.Provider>
@@ -94,5 +121,7 @@ export function GameProvider({ children }) {
 }
 
 export function useGame() {
-  return useContext(GameContext);
+  const ctx = useContext(GameContext);
+  if (!ctx) throw new Error('useGame must be used within a GameProvider');
+  return ctx;
 }
