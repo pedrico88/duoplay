@@ -8,6 +8,8 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { GameProvider } from '@/lib/gameContext.jsx';
 import AppLayout from '@/components/duoplay/AppLayout';
+import ErrorBoundary from '@/components/duoplay/ErrorBoundary';
+import OfflineBanner from '@/components/duoplay/OfflineBanner';
 import Home from '@/pages/Home';
 import Games from '@/pages/Games';
 import Profile from '@/pages/Profile';
@@ -81,14 +83,17 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <OfflineBanner />
+            <AuthenticatedApp />
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 
