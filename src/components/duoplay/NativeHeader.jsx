@@ -12,7 +12,7 @@ export default function NativeHeader({ title, subtitle, backTo, onBack, rightSlo
 
   const handleBack = () => {
     if (onBack) { onBack(); return; }
-    if (backTo) { navigate(backTo); return; }
+    if (backTo) { navigate(backTo, { replace: true }); return; }
     navigate(-1);
   };
 

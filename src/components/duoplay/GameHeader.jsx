@@ -59,7 +59,7 @@ export default function GameHeader({ title, emoji, onReset, player1Score = 0, pl
       <ExitGameDrawer
         open={showExit}
         onOpenChange={setShowExit}
-        onConfirm={() => { setShowExit(false); navigate('/games'); }}
+        onConfirm={() => navigate('/games', { replace: true })}
       />
     </>
   );

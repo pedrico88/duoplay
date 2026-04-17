@@ -67,7 +67,7 @@ export default function TruthOrDare() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500/10 to-cyan-500/10 flex flex-col">
-      <NativeHeader title="Verdad o Reto" subtitle="🎯🔥" />
+      <NativeHeader title="Verdad o Reto" subtitle="🎯🔥" backTo="/games" />
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
         {/* Current player */}
