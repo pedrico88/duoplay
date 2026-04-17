@@ -5,7 +5,7 @@ import GameHeader from '@/components/duoplay/GameHeader';
 import WinnerModal from '@/components/duoplay/WinnerModal';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Button } from '@/components/ui/button';
-import { TRIVIA_QUESTIONS } from '@/lib/triviaQuestions';
+import { TRIVIA_QUESTIONS, TRIVIA_QUESTIONS_HARD } from '@/lib/triviaQuestions';
 
 const CATS = [
   { id: 'ciencia', name: 'Ciencia', emoji: '🔬' },
@@ -18,6 +18,7 @@ export default function Trivia() {
   const navigate = useNavigate();
   const { recordWin, recordLoss, setSessionScore } = useGame();
   const [phase, setPhase] = useState('setup');
+  const [difficulty, setDifficulty] = useState(null);
   const [category, setCategory] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [qIndex, setQIndex] = useState(0);
@@ -31,9 +32,10 @@ export default function Trivia() {
 
   const startGame = (catId) => {
     setCategory(catId);
+    const pool = difficulty === 'hard' ? TRIVIA_QUESTIONS_HARD : TRIVIA_QUESTIONS;
     const allQs = catId === 'mixed'
-      ? Object.values(TRIVIA_QUESTIONS).flat()
-      : TRIVIA_QUESTIONS[catId] || [];
+      ? Object.values(pool).flat()
+      : pool[catId] || [];
     const shuffled = [...allQs].sort(() => Math.random() - 0.5).slice(0, 10);
     setQuestions(shuffled);
     setQIndex(0);
@@ -103,19 +105,56 @@ export default function Trivia() {
         <GameHeader emoji="🧠💡" />
         <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
           <h2 className="font-display text-xl font-bold">Trivia</h2>
-          <p className="text-sm text-muted-foreground">Elige una categoría</p>
-          <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
-            {CATS.map(cat => (
-              <Button key={cat.id} variant="outline" onClick={() => startGame(cat.id)}
-                className="h-20 rounded-2xl font-display flex flex-col gap-1">
-                <span className="text-2xl">{cat.emoji}</span>
-                <span className="text-sm">{cat.name}</span>
+
+          {/* Difficulty selector */}
+          {!difficulty ? (
+            <>
+              <p className="text-sm text-muted-foreground">Elige la dificultad</p>
+              <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+                <button
+                  onClick={() => setDifficulty('normal')}
+                  className="h-28 rounded-2xl border-2 border-border bg-card flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                  <span className="text-3xl">😊</span>
+                  <span className="font-display font-bold text-base">Normal</span>
+                  <span className="text-xs text-muted-foreground text-center px-2">Preguntas accesibles</span>
+                </button>
+                <button
+                  onClick={() => setDifficulty('hard')}
+                  className="h-28 rounded-2xl border-2 border-destructive/50 bg-destructive/5 flex flex-col items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                  <span className="text-3xl">🔥</span>
+                  <span className="font-display font-bold text-base text-destructive">Difícil</span>
+                  <span className="text-xs text-muted-foreground text-center px-2">Preguntas avanzadas</span>
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Dificultad:</span>
+                <span className={`text-sm font-bold ${difficulty === 'hard' ? 'text-destructive' : 'text-primary'}`}>
+                  {difficulty === 'hard' ? '🔥 Difícil' : '😊 Normal'}
+                </span>
+                <button onClick={() => setDifficulty(null)} className="text-xs text-muted-foreground underline ml-1">
+                  cambiar
+                </button>
+              </div>
+              <p className="text-sm text-muted-foreground">Elige una categoría</p>
+              <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
+                {CATS.map(cat => (
+                  <Button key={cat.id} variant="outline" onClick={() => startGame(cat.id)}
+                    className="h-20 rounded-2xl font-display flex flex-col gap-1">
+                    <span className="text-2xl">{cat.emoji}</span>
+                    <span className="text-sm">{cat.name}</span>
+                  </Button>
+                ))}
+              </div>
+              <Button variant="outline" onClick={() => startGame('mixed')} className="rounded-2xl px-8 font-display">
+                🎲 Mixto
               </Button>
-            ))}
-          </div>
-          <Button variant="outline" onClick={() => startGame('mixed')} className="rounded-2xl px-8 font-display">
-            🎲 Mixto
-          </Button>
+            </>
+          )}
         </div>
       </div>
     );
@@ -207,7 +246,7 @@ export default function Trivia() {
         show={showWinner}
         winner={scores.p1 > scores.p2 ? 'Jugador 1' : scores.p2 > scores.p1 ? 'Jugador 2' : ''}
         isDraw={scores.p1 === scores.p2}
-        onPlayAgain={() => { setShowWinner(false); setPhase('setup'); }}
+        onPlayAgain={() => { setShowWinner(false); setPhase('setup'); setDifficulty(null); }}
         onExit={() => navigate('/games')}
       />
     </div>
