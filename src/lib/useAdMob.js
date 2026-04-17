@@ -66,3 +66,11 @@ export function useAdMob(isTournament) {
 
   return { recordGameEnd };
 }
+
+/**
+ * useInterstitialAd
+ * @returns {{ showAd: () => void }}
+ */
+export function useInterstitialAd() {
+  return { showAd: showInterstitial };
+}
