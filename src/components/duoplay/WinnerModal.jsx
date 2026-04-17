@@ -1,15 +1,18 @@
 import React, { useEffect, useRef } from 'react';
+import { useInterstitialAd } from '@/lib/useAdMob';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
 
 export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw = false }) {
+  const { showAd } = useInterstitialAd();
   const firedRef = useRef(false);
 
   useEffect(() => {
     if (show && !isDraw && !firedRef.current) {
       firedRef.current = true;
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      showAd();
     }
     if (!show) firedRef.current = false;
   }, [show, isDraw]);
