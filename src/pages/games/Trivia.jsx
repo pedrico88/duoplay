@@ -5,7 +5,7 @@ import GameHeader from '@/components/duoplay/GameHeader';
 import WinnerModal from '@/components/duoplay/WinnerModal';
 import { useGame } from '@/lib/gameContext.jsx';
 import { Button } from '@/components/ui/button';
-import { TRIVIA_QUESTIONS, TRIVIA_QUESTIONS_HARD } from '@/lib/triviaQuestions';
+import { TRIVIA_QUESTIONS, TRIVIA_QUESTIONS_HARD, TRIVIA_QUESTIONS_EXTRA } from '@/lib/triviaQuestions';
 
 const CATS = [
   { id: 'ciencia', name: 'Ciencia', emoji: '🔬' },
@@ -32,10 +32,11 @@ export default function Trivia() {
 
   const startGame = (catId) => {
     setCategory(catId);
-    const pool = difficulty === 'hard' ? TRIVIA_QUESTIONS_HARD : TRIVIA_QUESTIONS;
+    const base = difficulty === 'hard' ? TRIVIA_QUESTIONS_HARD : TRIVIA_QUESTIONS;
+    const extra = difficulty === 'hard' ? {} : TRIVIA_QUESTIONS_EXTRA;
     const allQs = catId === 'mixed'
-      ? Object.values(pool).flat()
-      : pool[catId] || [];
+      ? [...Object.values(base).flat(), ...Object.values(extra).flat()]
+      : [...(base[catId] || []), ...(extra[catId] || [])];
     const shuffled = [...allQs].sort(() => Math.random() - 0.5).slice(0, 10);
     setQuestions(shuffled);
     setQIndex(0);
