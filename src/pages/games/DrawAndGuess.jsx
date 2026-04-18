@@ -46,6 +46,7 @@ export default function DrawAndGuess() {
   const [lastResult, setLastResult] = useState(null);
   const [showWinner, setShowWinner] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
+  const [savedImage, setSavedImage] = useState(null);
   const timerRef = useRef(null);
   const lastPos = useRef(null);
 
@@ -109,6 +110,8 @@ export default function DrawAndGuess() {
       setTimeLeft(t => {
         if (t <= 1) {
           clearInterval(timerRef.current);
+          const canvas = canvasRef.current;
+          if (canvas) setSavedImage(canvas.toDataURL());
           setPhase('guessing');
           return 0;
         }
@@ -120,6 +123,7 @@ export default function DrawAndGuess() {
 
   const submitGuess = () => {
     clearInterval(timerRef.current);
+    if (canvasRef.current) setSavedImage(canvasRef.current.toDataURL());
     const correct = guess.trim().toLowerCase() === word.toLowerCase();
     setLastResult(correct);
     if (correct) {
@@ -145,6 +149,7 @@ export default function DrawAndGuess() {
     setCurrentPlayer(p => p === 1 ? 2 : 1);
     setGuess('');
     setLastResult(null);
+    setSavedImage(null);
     setPhase('setup');
   };
 
@@ -209,7 +214,12 @@ export default function DrawAndGuess() {
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
-            <Button onClick={() => { clearInterval(timerRef.current); setPhase('guessing'); }} variant="outline" className="rounded-xl">
+            <Button onClick={() => {
+              clearInterval(timerRef.current);
+              const canvas = canvasRef.current;
+              if (canvas) setSavedImage(canvas.toDataURL());
+              setPhase('guessing');
+            }} variant="outline" className="rounded-xl">
               ¡Ya terminé! →
             </Button>
           </div>
@@ -218,7 +228,10 @@ export default function DrawAndGuess() {
         {phase === 'guessing' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col gap-6 w-full">
             <p className="font-display text-lg font-bold text-center">¡Ahora adivina, <span className="text-secondary">{guesserName}</span>!</p>
-            <canvas ref={canvasRef} width={600} height={400} className="w-full rounded-2xl border-2 border-border bg-white pointer-events-none" />
+            {savedImage
+              ? <img src={savedImage} alt="Dibujo" className="w-full rounded-2xl border-2 border-border bg-white" />
+              : <canvas ref={canvasRef} width={600} height={400} className="w-full rounded-2xl border-2 border-border bg-white pointer-events-none" />
+            }
             <input
               className="w-full p-4 rounded-2xl border-2 border-border bg-card text-center font-display text-lg focus:border-primary outline-none"
               placeholder="Escribe tu respuesta..."
