@@ -10,6 +10,9 @@ import TruthOrDare from './games/TruthOrDare';
 import GuessNumber from './games/GuessNumber';
 import Memory from './games/Memory';
 import MathRace from './games/MathRace';
+import WouldYouRather from './games/WouldYouRather';
+import DrawAndGuess from './games/DrawAndGuess';
+import ReactionGame from './games/ReactionGame';
 import { useGame } from '@/lib/gameContext.jsx';
 import TournamentBanner from '@/components/duoplay/TournamentBanner';
 import { useAdMob } from '@/lib/useAdMob';
@@ -26,6 +29,9 @@ const GAME_MAP = {
   guessnumber: GuessNumber,
   memory: Memory,
   mathrace: MathRace,
+  wouldyourather: WouldYouRather,
+  drawandguess: DrawAndGuess,
+  reactiongame: ReactionGame,
 };
 
 export default function PlayGame() {

@@ -89,6 +89,33 @@ export const GAMES = [
     color: 'from-cyan-500 to-blue-500',
     players: '2 jugadores',
   },
+  {
+    id: 'wouldyourather',
+    name: '¿Qué Preferirías?',
+    emoji: '🤔💭',
+    category: 'party',
+    description: 'Elige entre dos opciones difíciles',
+    color: 'from-purple-500 to-pink-500',
+    players: '2 jugadores',
+  },
+  {
+    id: 'drawandguess',
+    name: 'Dibuja y Adivina',
+    emoji: '🎨🖊️',
+    category: 'party',
+    description: 'Dibuja y que el otro adivine',
+    color: 'from-yellow-500 to-orange-500',
+    players: '2 jugadores',
+  },
+  {
+    id: 'reactiongame',
+    name: 'Test de Reacción',
+    emoji: '⚡🎯',
+    category: 'reflexes',
+    description: '¿Quién tiene los reflejos más rápidos?',
+    color: 'from-green-500 to-teal-500',
+    players: '2 jugadores',
+  },
 ];
 
 export const CATEGORIES = [
