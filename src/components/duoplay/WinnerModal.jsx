@@ -12,7 +12,6 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
     if (show && !isDraw && !firedRef.current) {
       firedRef.current = true;
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      showAd();
     }
     if (!show) firedRef.current = false;
   }, [show, isDraw]);
@@ -42,10 +41,10 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
               {isDraw ? 'Nadie gana esta ronda' : `${winner} ha ganado`}
             </p>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={onExit} className="flex-1 rounded-xl">
+              <Button variant="outline" onClick={() => { showAd(); onExit(); }} className="flex-1 rounded-xl">
                 Salir
               </Button>
-              <Button onClick={onPlayAgain} className="flex-1 rounded-xl bg-primary">
+              <Button onClick={() => { showAd(); onPlayAgain(); }} className="flex-1 rounded-xl bg-primary">
                 Jugar otra vez
               </Button>
             </div>
