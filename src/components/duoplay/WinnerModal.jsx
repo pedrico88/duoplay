@@ -15,14 +15,21 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
     }
     if (!show) firedRef.current = false;
   }, [show, isDraw]);
-
-  const handlePlayAgain = async () => {
-    await showAd();
+const handlePlayAgain = async () => {
+    try {
+      await showAd();
+    } catch (e) {
+      console.warn('Ad error:', e);
+    }
     onPlayAgain();
   };
 
   const handleExit = async () => {
-    await showAd();
+    try {
+      await showAd();
+    } catch (e) {
+      console.warn('Ad error:', e);
+    }
     onExit();
   };
 
