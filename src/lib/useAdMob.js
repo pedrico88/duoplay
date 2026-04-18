@@ -26,9 +26,17 @@ async function showInterstitial() {
   const AdMob = await getAdMob();
   if (!AdMob) return;
   try {
-    await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
-    await AdMob.showInterstitial();
-  } catch {}
+    const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
+    await Promise.race([
+      (async () => {
+        await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
+        await AdMob.showInterstitial();
+      })(),
+      timeout,
+    ]);
+  } catch (e) {
+    console.warn('AdMob showInterstitial error:', e);
+  }
 }
 
 export function useAdMob(isTournament) {
