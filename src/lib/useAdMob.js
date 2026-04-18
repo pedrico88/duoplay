@@ -1,54 +1,88 @@
-import React, { useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import confetti from 'canvas-confetti';
+import { useRef } from 'react';
 
-export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw = false }) {
-  const firedRef = useRef(false);
+const AD_UNIT_ID = 'ca-app-pub-4837637269293646/2944642002';
 
-  useEffect(() => {
-    if (show && !isDraw && !firedRef.current) {
-      firedRef.current = true;
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+let admobInitialized = false;
+let adReady = false;
+let adShowing = false;
+
+function isNativePlatform() {
+  return typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
+}
+
+async function getAdMob() {
+  if (!isNativePlatform()) return null;
+  try {
+    const { AdMob } = await import('@capacitor-community/admob');
+    if (!admobInitialized) {
+      await AdMob.initialize({ requestTrackingAuthorization: true });
+      AdMob.addListener('onInterstitialAdLoaded', () => {
+        adReady = true;
+      });
+      AdMob.addListener('onInterstitialAdFailedToLoad', () => {
+        adReady = false;
+      });
+      AdMob.addListener('onInterstitialAdDismissed', () => {
+        adShowing = false;
+        adReady = false;
+        setTimeout(() => {
+          prepareInterstitial();
+        }, 3000);
+      });
+      admobInitialized = true;
     }
-    if (!show) firedRef.current = false;
-  }, [show, isDraw]);
+    return AdMob;
+  } catch {
+    return null;
+  }
+}
 
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-6"
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-card rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"
-          >
-            <div className="text-6xl mb-4">
-              {isDraw ? '🤝' : '🏆'}
-            </div>
-            <h2 className="font-display text-2xl font-bold mb-2">
-              {isDraw ? '¡Empate!' : '¡Victoria!'}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {isDraw ? 'Nadie gana esta ronda' : `${winner} ha ganado`}
-            </p>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={onExit} className="flex-1 rounded-xl">
-                Salir
-              </Button>
-              <Button onClick={onPlayAgain} className="flex-1 rounded-xl bg-primary">
-                Jugar otra vez
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+async function prepareInterstitial() {
+  if (adReady || adShowing) return;
+  const AdMob = await getAdMob();
+  if (!AdMob) return;
+  try {
+    await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
+  } catch {}
+}
+
+async function showInterstitial() {
+  if (!adReady || adShowing) return;
+  const AdMob = await getAdMob();
+  if (!AdMob) return;
+  try {
+    adShowing = true;
+    adReady = false;
+    await AdMob.showInterstitial();
+  } catch {
+    adShowing = false;
+  }
+}
+
+if (isNativePlatform()) {
+  setTimeout(() => {
+    prepareInterstitial();
+  }, 3000);
+}
+
+export function useAdMob(isTournament) {
+  const normalCountRef = useRef(0);
+
+  const recordGameEnd = () => {
+    if (isTournament) {
+      showInterstitial();
+    } else {
+      normalCountRef.current += 1;
+      if (normalCountRef.current >= 2) {
+        normalCountRef.current = 0;
+        showInterstitial();
+      }
+    }
+  };
+
+  return { recordGameEnd };
+}
+
+export function useInterstitialAd() {
+  return { showAd: showInterstitial };
 }
