@@ -16,6 +16,16 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
     if (!show) firedRef.current = false;
   }, [show, isDraw]);
 
+  const handlePlayAgain = async () => {
+    await showAd();
+    onPlayAgain();
+  };
+
+  const handleExit = async () => {
+    await showAd();
+    onExit();
+  };
+
   return (
     <AnimatePresence>
       {show && (
@@ -41,10 +51,10 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
               {isDraw ? 'Nadie gana esta ronda' : `${winner} ha ganado`}
             </p>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => { showAd(); onExit(); }} className="flex-1 rounded-xl">
+              <Button variant="outline" onClick={handleExit} className="flex-1 rounded-xl">
                 Salir
               </Button>
-              <Button onClick={() => { showAd(); onPlayAgain(); }} className="flex-1 rounded-xl bg-primary">
+              <Button onClick={handlePlayAgain} className="flex-1 rounded-xl bg-primary">
                 Jugar otra vez
               </Button>
             </div>
