@@ -72,7 +72,7 @@ export default function PlayGame() {
       setGameWinner(winner);
       setGameFinished(true);
       advanceTournament(winner === 'draw' ? null : winner);
-      recordGameEnd();
+      // recordGameEnd();
     }
   }, [sessionScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -84,7 +84,7 @@ export default function PlayGame() {
     const p2Gained = sessionScore.player2 > base.player2;
     if (p1Gained || p2Gained) {
       normalBaseRef.current = { player1: sessionScore.player1, player2: sessionScore.player2 };
-      recordGameEnd();
+      // recordGameEnd();
     }
   }, [sessionScore]); // eslint-disable-line react-hooks/exhaustive-deps
 
