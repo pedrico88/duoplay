@@ -23,16 +23,15 @@ async function getAdMob() {
 }
 
 async function showInterstitial() {
-  const AdMob = await getAdMob();
-  if (!AdMob) return;
   try {
-    const timeout = new Promise((resolve) => setTimeout(resolve, 3000));
     await Promise.race([
       (async () => {
+        const AdMob = await getAdMob();
+        if (!AdMob) return;
         await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
         await AdMob.showInterstitial();
       })(),
-      timeout,
+      new Promise((resolve) => setTimeout(resolve, 3000)),
     ]);
   } catch (e) {
     console.warn('AdMob showInterstitial error:', e);
