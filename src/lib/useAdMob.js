@@ -43,11 +43,18 @@ async function showInterstitial() {
     if (!adLoaded) return;
     adLoaded = false;
     await new Promise((resolve) => {
-      AdMob.addListener('interstitialDidDismiss', () => {
+      const listener = AdMob.addListener('interstitialDidDismiss', () => {
+        listener.then(l => l.remove());
         resolve();
       });
-      AdMob.showInterstitial().catch(() => resolve());
-      setTimeout(resolve, 5000);
+      AdMob.showInterstitial().catch(() => {
+        listener.then(l => l.remove());
+        resolve();
+      });
+      setTimeout(() => {
+        listener.then(l => l.remove());
+        resolve();
+      }, 5000);
     });
     preloadAd();
   } catch (e) {
