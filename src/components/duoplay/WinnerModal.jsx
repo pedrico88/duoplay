@@ -8,31 +8,24 @@ export default function WinnerModal({ show, winner, onPlayAgain, onExit, isDraw 
   const { showAd } = useInterstitialAd();
   const firedRef = useRef(false);
 
-  useEffect(() => {
-    if (show && !isDraw && !firedRef.current) {
+useEffect(() => {
+  if (show) {
+    if (!isDraw && !firedRef.current) {
       firedRef.current = true;
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
-    if (!show) firedRef.current = false;
-  }, [show, isDraw]);
-const handlePlayAgain = async () => {
-    try {
-      await showAd();
-    } catch (e) {
-      console.warn('Ad error:', e);
-    }
-    onPlayAgain();
-  };
+    showAd().catch((e) => console.warn('Ad error:', e));
+  }
+  if (!show) firedRef.current = false;
+}, [show, isDraw]);
 
-  const handleExit = async () => {
-    try {
-      await showAd();
-    } catch (e) {
-      console.warn('Ad error:', e);
-    }
-    onExit();
-  };
+const handlePlayAgain = () => {
+  onPlayAgain();
+};
 
+const handleExit = () => {
+  onExit();
+};
   return (
     <AnimatePresence>
       {show && (
