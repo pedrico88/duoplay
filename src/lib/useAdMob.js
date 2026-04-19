@@ -24,11 +24,11 @@ async function getAdMob() {
 
 async function showInterstitial() {
   try {
-    const AdMob = await getAdMob();
-    if (!AdMob) return;
+    const { AdMob, InterstitialAdPluginEvents } = await import('@capacitor-community/admob');
+    if (!isNativePlatform()) return;
     await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
     await new Promise((resolve) => {
-      const listener = AdMob.addListener('interstitialDidDismiss', () => {
+      const listener = AdMob.addListener(InterstitialAdPluginEvents.Dismissed, () => {
         listener.then(l => l.remove());
         resolve();
       });
