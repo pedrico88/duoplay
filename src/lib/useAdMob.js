@@ -56,7 +56,7 @@ export function useAdMob(isTournament) {
       showInterstitial();
     } else {
       normalCountRef.current += 1;
-      if (normalCountRef.current >= 2) {
+      if (normalCountRef.current >= 3) {
         normalCountRef.current = 0;
         showInterstitial();
       }
