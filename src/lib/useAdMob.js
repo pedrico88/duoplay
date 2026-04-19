@@ -3,7 +3,6 @@ import { useRef, useEffect } from 'react';
 const AD_UNIT_ID = 'ca-app-pub-4837637269293646/2944642002';
 
 let admobInitialized = false;
-let adLoaded = false;
 
 function isNativePlatform() {
   return typeof window !== 'undefined' && window.Capacitor?.isNativePlatform?.();
@@ -23,25 +22,11 @@ async function getAdMob() {
   }
 }
 
-async function preloadAd() {
-  try {
-    const AdMob = await getAdMob();
-    if (!AdMob) return;
-    adLoaded = false;
-    await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
-    adLoaded = true;
-  } catch (e) {
-    console.warn('AdMob preload error:', e);
-    adLoaded = false;
-  }
-}
-
 async function showInterstitial() {
   try {
     const AdMob = await getAdMob();
     if (!AdMob) return;
-    if (!adLoaded) return;
-    adLoaded = false;
+    await AdMob.prepareInterstitial({ adId: AD_UNIT_ID });
     await new Promise((resolve) => {
       const listener = AdMob.addListener('interstitialDidDismiss', () => {
         listener.then(l => l.remove());
@@ -56,7 +41,6 @@ async function showInterstitial() {
         resolve();
       }, 5000);
     });
-    preloadAd();
   } catch (e) {
     console.warn('AdMob show error:', e);
   }
@@ -65,9 +49,7 @@ async function showInterstitial() {
 export function useAdMob(isTournament) {
   const normalCountRef = useRef(0);
 
-  useEffect(() => {
-    preloadAd();
-  }, []);
+  useEffect(() => {}, []);
 
   const recordGameEnd = () => {
     if (isTournament) {
