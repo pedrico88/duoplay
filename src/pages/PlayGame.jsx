@@ -13,6 +13,27 @@ import MathRace from './games/MathRace';
 import WouldYouRather from './games/WouldYouRather';
 import DrawAndGuess from './games/DrawAndGuess';
 import ReactionGame from './games/ReactionGame';
+import Battleship from './games/Battleship';
+import HangmanDuo from './games/HangmanDuo';
+import SpeedTyping from './games/SpeedTyping';
+import ColorMatch from './games/ColorMatch';
+import QuickDraw from './games/QuickDraw';
+import EmojiStory from './games/EmojiStory';
+import NeverHaveIEver from './games/NeverHaveIEver';
+import WordChain from './games/WordChain';
+import MimicGame from './games/MimicGame';
+import NumberMemory from './games/NumberMemory';
+import CategoryBlitz from './games/CategoryBlitz';
+import TwoTruthsOneLie from './games/TwoTruthsOneLie';
+import Countdown from './games/Countdown';
+import FaceOff from './games/FaceOff';
+import FingerChop from './games/FingerChop';
+import Riddles from './games/Riddles';
+import SoundBoard from './games/SoundBoard';
+import SpeedSort from './games/SpeedSort';
+import MusicQuiz from './games/MusicQuiz';
+import LastLetterCity from './games/LastLetterCity';
+import Debate from './games/Debate';
 import { useGame } from '@/lib/gameContext.jsx';
 import TournamentBanner from '@/components/duoplay/TournamentBanner';
 import { useAdMob } from '@/lib/useAdMob';
@@ -32,6 +53,27 @@ const GAME_MAP = {
   wouldyourather: WouldYouRather,
   drawandguess: DrawAndGuess,
   reactiongame: ReactionGame,
+  battleship: Battleship,
+  hangmanduo: HangmanDuo,
+  speedtyping: SpeedTyping,
+  colormatch: ColorMatch,
+  quickdraw: QuickDraw,
+  emojistory: EmojiStory,
+  neverhaviever: NeverHaveIEver,
+  wordchain: WordChain,
+  mimicgame: MimicGame,
+  numbermemory: NumberMemory,
+  categoryblitz: CategoryBlitz,
+  twotruthsonelie: TwoTruthsOneLie,
+  countdown: Countdown,
+  faceoff: FaceOff,
+  fingerchop: FingerChop,
+  riddles: Riddles,
+  soundboard: SoundBoard,
+  speedsort: SpeedSort,
+  musicquiz: MusicQuiz,
+  lastlettercity: LastLetterCity,
+  debate: Debate,
 };
 
 export default function PlayGame() {
